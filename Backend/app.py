@@ -152,5 +152,39 @@ def get_activities(stop_id):
 
     return jsonify(activities)
 
+@app.route("/full_trip/<int:trip_id>", methods=["GET"])
+def get_full_trip(trip_id):
+    conn = connect_db()
+    cur = conn.cursor()
+
+    # Get trip
+    cur.execute("SELECT * FROM trips WHERE id = %s;", (trip_id,))
+    trip = cur.fetchone()
+
+    # Get stops
+    cur.execute("SELECT * FROM trip_stops WHERE trip_id = %s ORDER BY stop_order;", (trip_id,))
+    stops = cur.fetchall()
+
+    full_data = []
+
+    for stop in stops:
+        stop_id = stop[0]
+
+        cur.execute("SELECT * FROM activities WHERE stop_id = %s;", (stop_id,))
+        activities = cur.fetchall()
+
+        full_data.append({
+            "stop": stop,
+            "activities": activities
+        })
+
+    cur.close()
+    conn.close()
+
+    return {
+        "trip": trip,
+        "details": full_data
+    }
+
 if __name__ == "__main__":
     app.run(debug=True)
