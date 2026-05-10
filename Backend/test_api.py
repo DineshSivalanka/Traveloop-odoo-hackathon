@@ -1,8 +1,11 @@
 import urllib.request
 import json
 
-def test_api(url, data):
-    req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
+def test_api(url, data=None, method="GET"):
+    if data:
+        req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'}, method=method)
+    else:
+        req = urllib.request.Request(url, method=method)
     try:
         with urllib.request.urlopen(req) as res:
             print("Status:", res.status)
@@ -13,8 +16,8 @@ def test_api(url, data):
     except Exception as e:
         print("Error:", e)
 
-print("Testing POST /signup")
-test_api("http://localhost:5000/signup", {"name": "Dinesh", "email": "test@gmail.com", "password": "1234"})
+print("Testing POST /trips")
+test_api("http://localhost:5000/trips", {"user_id": 1, "title": "Goa Trip", "description": "Fun", "start_date": "2026-05-20", "end_date": "2026-05-25"}, "POST")
 
-print("\nTesting POST /login")
-test_api("http://localhost:5000/login", {"email": "test@gmail.com", "password": "1234"})
+print("\nTesting GET /trips/1")
+test_api("http://localhost:5000/trips/1")

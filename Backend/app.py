@@ -57,22 +57,23 @@ def create_trip():
     cur = conn.cursor()
 
     cur.execute(
-        "INSERT INTO trips (user_id, title, description, start_date, end_date) VALUES (%s, %s, %s, %s, %s)",
+        "INSERT INTO trips (user_id, title, description, start_date, end_date) VALUES (%s, %s, %s, %s, %s) RETURNING id",
         (user_id, title, description, start_date, end_date)
     )
+    trip_id = cur.fetchone()[0]
 
     conn.commit()
     cur.close()
     conn.close()
 
-    return {"message": "Trip created"}
+    return jsonify({"trip_id": trip_id})
 
-@app.route("/trips", methods=["GET"])
-def get_trips():
+@app.route("/trips/<int:user_id>", methods=["GET"])
+def get_trips(user_id):
     conn = connect_db()
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM trips;")
+    cur.execute("SELECT * FROM trips WHERE user_id=%s", (user_id,))
     trips = cur.fetchall()
 
     cur.close()

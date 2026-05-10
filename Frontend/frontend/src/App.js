@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import API from "./api";
 
 function App() {
+  const [page, setPage] = useState("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+
   const [trips, setTrips] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -18,19 +23,57 @@ function App() {
   const [fullTrip, setFullTrip] = useState(null);
 
   const fetchTrips = () => {
-    API.get("/trips")
+    const userId = localStorage.getItem("user_id");
+    if (!userId) return;
+    API.get(`/trips/${userId}`)
       .then(res => setTrips(res.data))
       .catch(err => console.log(err));
   };
 
   useEffect(() => {
-    fetchTrips();
+    const userId = localStorage.getItem("user_id");
+    if (userId) {
+      setPage("dashboard");
+      fetchTrips();
+    }
   }, []);
+
+  const handleLogin = () => {
+    API.post("/login", { email, password })
+      .then(res => {
+        localStorage.setItem("user_id", res.data.user_id);
+        setPage("dashboard");
+        fetchTrips();
+      })
+      .catch(() => alert("Invalid login"));
+  };
+
+  const handleSignup = () => {
+    API.post("/signup", { name, email, password })
+      .then(res => {
+        localStorage.setItem("user_id", res.data.user_id);
+        setPage("dashboard");
+        fetchTrips();
+      })
+      .catch(() => alert("Error signing up"));
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user_id");
+    setPage("login");
+    setTrips([]);
+    setSelectedTrip(null);
+    setStops([]);
+    setSelectedStop(null);
+    setActivities([]);
+    setFullTrip(null);
+  };
 
   const createTrip = () => {
     if (!title) return;
+    const userId = localStorage.getItem("user_id");
     API.post("/trips", {
-      user_id: 1,
+      user_id: userId,
       title,
       description,
       start_date: "2026-05-20",
@@ -109,9 +152,39 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1 className="header-title">✈️ Traveloop</h1>
-      
-      <div className="glass-card" style={{ marginBottom: "40px" }}>
+      {page === "login" && (
+        <div style={{ padding: "50px", textAlign: "center", maxWidth: "400px", margin: "100px auto" }} className="glass-card">
+          <h2>Login to Traveloop</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "20px" }}>
+            <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+            <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+            <button onClick={handleLogin}>Login</button>
+            <p>Don't have an account? <span style={{color:"#3b82f6", cursor:"pointer", fontWeight:"bold"}} onClick={() => setPage("signup")}>Sign Up</span></p>
+          </div>
+        </div>
+      )}
+
+      {page === "signup" && (
+        <div style={{ padding: "50px", textAlign: "center", maxWidth: "400px", margin: "100px auto" }} className="glass-card">
+          <h2>Sign Up for Traveloop</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "20px" }}>
+            <input placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
+            <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+            <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+            <button onClick={handleSignup}>Sign Up</button>
+            <p>Already have an account? <span style={{color:"#3b82f6", cursor:"pointer", fontWeight:"bold"}} onClick={() => setPage("login")}>Login</span></p>
+          </div>
+        </div>
+      )}
+
+      {page === "dashboard" && (
+        <>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+            <h1 className="header-title" style={{ margin: 0 }}>✈️ Traveloop</h1>
+            <button onClick={handleLogout} className="outline">Logout</button>
+          </div>
+          
+          <div className="glass-card" style={{ marginBottom: "40px" }}>
         <h3>Start a New Journey</h3>
         <p style={{color: "var(--text-muted)", marginBottom: "15px"}}>Plan your next big adventure.</p>
         <div className="input-group">
@@ -220,7 +293,8 @@ function App() {
           )}
         </div>
       </div>
-
+        </>
+      )}
     </div>
   );
 }
