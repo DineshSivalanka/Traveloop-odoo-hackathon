@@ -35,6 +35,8 @@ function App() {
     if (userId) {
       setPage("dashboard");
       fetchTrips();
+    } else {
+      setPage("login");
     }
   }, []);
 
@@ -177,11 +179,11 @@ function App() {
         </div>
       )}
 
-      {page === "dashboard" && (
+      {page === "dashboard" && localStorage.getItem("user_id") && (
         <>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <h1 className="header-title" style={{ margin: 0 }}>✈️ Traveloop</h1>
-            <button onClick={handleLogout} className="outline">Logout</button>
+            <button onClick={handleLogout} className="outline">🚪 Logout</button>
           </div>
           
           <div className="glass-card" style={{ marginBottom: "40px" }}>
@@ -294,6 +296,29 @@ function App() {
         </div>
       </div>
         </>
+      )}
+
+      {/* 🔒 Fallback: not logged in and not on auth pages */}
+      {!localStorage.getItem("user_id") && page !== "login" && page !== "signup" && (
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "60vh",
+          gap: "20px"
+        }}>
+          <div className="glass-card" style={{ textAlign: "center", padding: "50px", maxWidth: "420px" }}>
+            <div style={{ fontSize: "3rem", marginBottom: "10px" }}>🔒</div>
+            <h2 style={{ marginBottom: "8px" }}>Access Restricted</h2>
+            <p style={{ color: "var(--text-muted)", marginBottom: "24px" }}>
+              You need to be logged in to view this page.
+            </p>
+            <button onClick={() => setPage("login")} style={{ width: "100%" }}>
+              Go to Login
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
