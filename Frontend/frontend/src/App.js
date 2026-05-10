@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "./api";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const [page, setPage] = useState("login");
@@ -41,6 +42,10 @@ function App() {
   }, []);
 
   const handleLogin = () => {
+    if (!email.includes("@") || password.length < 4) {
+      alert("Please enter a valid email and a password of at least 4 characters.");
+      return;
+    }
     API.post("/login", { email, password })
       .then(res => {
         localStorage.setItem("user_id", res.data.user_id);
@@ -51,6 +56,14 @@ function App() {
   };
 
   const handleSignup = () => {
+    if (!name.trim()) {
+      alert("Please enter your name.");
+      return;
+    }
+    if (!email.includes("@") || password.length < 4) {
+      alert("Please enter a valid email and a password of at least 4 characters.");
+      return;
+    }
     API.post("/signup", { name, email, password })
       .then(res => {
         localStorage.setItem("user_id", res.data.user_id);
@@ -161,6 +174,9 @@ function App() {
             <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
             <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
             <button onClick={handleLogin}>Login</button>
+            <p style={{fontSize: "0.9rem", color: "var(--text-muted)", cursor: "pointer", margin: "5px 0"}} onClick={() => alert("Check your email for password reset instructions!")}>
+              Forgot Password?
+            </p>
             <p>Don't have an account? <span style={{color:"#3b82f6", cursor:"pointer", fontWeight:"bold"}} onClick={() => setPage("signup")}>Sign Up</span></p>
           </div>
         </div>
@@ -179,14 +195,22 @@ function App() {
         </div>
       )}
 
-      {page === "dashboard" && localStorage.getItem("user_id") && (
+      {(page === "dashboard" || page === "planner") && localStorage.getItem("user_id") && (
         <>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <h1 className="header-title" style={{ margin: 0 }}>✈️ Traveloop</h1>
-            <button onClick={handleLogout} className="outline">🚪 Logout</button>
+            <h1 className="header-title" style={{ margin: 0, cursor: "pointer" }} onClick={() => setPage("dashboard")}>✈️ Traveloop</h1>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button onClick={() => setPage("dashboard")} className={page === "dashboard" ? "" : "outline"}>Dashboard</button>
+              <button onClick={() => setPage("planner")} className={page === "planner" ? "" : "outline"}>Trip Planner</button>
+              <button onClick={handleLogout} className="outline" style={{ border: "1px solid #ef4444", color: "#ef4444" }}>🚪 Logout</button>
+            </div>
           </div>
           
-          <div className="glass-card" style={{ marginBottom: "40px" }}>
+          {page === "dashboard" && <Dashboard setTab={setPage} />}
+          
+          {page === "planner" && (
+            <>
+              <div className="glass-card" style={{ marginBottom: "40px" }}>
         <h3>Start a New Journey</h3>
         <p style={{color: "var(--text-muted)", marginBottom: "15px"}}>Plan your next big adventure.</p>
         <div className="input-group">
@@ -295,6 +319,8 @@ function App() {
           )}
         </div>
       </div>
+            </>
+          )}
         </>
       )}
 

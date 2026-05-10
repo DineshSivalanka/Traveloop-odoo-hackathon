@@ -2,11 +2,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from db import connect_db
 from routes.user_routes import user_bp
+from routes.city_routes import city_bp
+from routes.dashboard_routes import dashboard_bp
 
 app = Flask(__name__)
 CORS(app)
 
 app.register_blueprint(user_bp)
+app.register_blueprint(city_bp)
+app.register_blueprint(dashboard_bp)
 
 @app.route("/users", methods=["GET"])
 def get_users():
