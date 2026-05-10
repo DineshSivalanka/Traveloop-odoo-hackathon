@@ -37,6 +37,10 @@ const AuthPage = () => {
         setError('Please fill in all fields');
         return;
       }
+      if (!validateEmail(formData.email)) {
+        setError('Please enter a valid email address');
+        return;
+      }
       setLoading(true);
       const res = await login(formData.email, formData.password);
       if (!res.success) {
@@ -46,6 +50,10 @@ const AuthPage = () => {
     } else {
       if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
         setError('Please fill in all fields');
+        return;
+      }
+      if (!validateEmail(formData.email)) {
+        setError('Please enter a valid email address');
         return;
       }
       if (formData.password !== formData.confirmPassword) {
@@ -60,13 +68,17 @@ const AuthPage = () => {
           password: formData.password
         });
         if (res.data.user_id) {
-          await login(formData.email, formData.password);
+          const loginRes = await login(formData.email, formData.password);
+          if (!loginRes.success) {
+            setError(loginRes.error || 'Signup successful, but auto-login failed');
+            setLoading(false);
+          }
         } else {
           setError(res.data.error || 'Signup failed');
           setLoading(false);
         }
       } catch (err) {
-        setError('Signup failed');
+        setError(err.response?.data?.error || 'Signup failed');
         setLoading(false);
       }
     }
@@ -123,6 +135,7 @@ const AuthPage = () => {
               type="email"
               id="email"
               name="email"
+              autoComplete="email"
               placeholder="you@example.com"
               value={formData.email}
               onChange={handleInputChange}
@@ -137,6 +150,7 @@ const AuthPage = () => {
               type="password"
               id="password"
               name="password"
+              autoComplete={isLogin ? 'current-password' : 'new-password'}
               placeholder="At least 4 characters"
               value={formData.password}
               onChange={handleInputChange}
@@ -152,6 +166,7 @@ const AuthPage = () => {
                 type="password"
                 id="confirmPassword"
                 name="confirmPassword"
+                autoComplete="new-password"
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}

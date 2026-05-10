@@ -1,39 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import API from '../api';
 
 const StopDetail = ({ stopId, tripId, setTab }) => {
   const [stop, setStop] = useState(null);
-  const [cityId, setCityId] = useState(null);
   const [masterActivities, setMasterActivities] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (stopId) {
-      loadData();
-    }
-  }, [stopId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Get Stop Info
       const stopRes = await API.get(`/stops/detail/${stopId}`);
       const stopData = stopRes.data;
       setStop(stopData);
 
-      // 2. Get Selected Activities for this stop
       const selectedRes = await API.get(`/activities/${stopId}`);
       setSelectedActivities(selectedRes.data || []);
 
-      // 3. Find City ID by name to get master activities
       const cityRes = await API.get(`/cities/search?q=${stopData.city_name}`);
       if (cityRes.data && cityRes.data.length > 0) {
         const cityObj = cityRes.data[0];
-        const cId = cityObj.id;
-        setCityId(cId);
-        const masterRes = await API.get(`/activities/master/city/${cId}`);
+        const masterRes = await API.get(`/activities/master/city/${cityObj.id}`);
         setMasterActivities(masterRes.data || []);
       }
     } catch (err) {
@@ -41,7 +29,15 @@ const StopDetail = ({ stopId, tripId, setTab }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [stopId]);
+
+  useEffect(() => {
+    if (stopId) {
+      loadData();
+    }
+  }, [stopId, loadData]);
+
+
 
   const handleAddActivity = (master) => {
     // master: {id, city_id, name, category, base_cost, duration_hours, description}

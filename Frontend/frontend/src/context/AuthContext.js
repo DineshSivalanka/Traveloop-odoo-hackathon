@@ -3,6 +3,27 @@ import API from '../api';
 
 const AuthContext = createContext(null);
 
+const normalizeUser = (data) => {
+  // Supports both legacy array response and current object response
+  if (Array.isArray(data)) {
+    return {
+      id: data[0],
+      name: data[1],
+      email: data[2]
+    };
+  }
+
+  if (data && typeof data === 'object') {
+    return {
+      id: data.id ?? data.user_id,
+      name: data.name,
+      email: data.email
+    };
+  }
+
+  return null;
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,12 +34,12 @@ export const AuthProvider = ({ children }) => {
       if (userId) {
         try {
           const res = await API.get(`/profile/${userId}`);
-          // res.data: [id, name, email]
-          setUser({
-            id: res.data[0],
-            name: res.data[1],
-            email: res.data[2]
-          });
+          const restoredUser = normalizeUser(res.data);
+          if (restoredUser?.id) {
+            setUser(restoredUser);
+          } else {
+            localStorage.removeItem('user_id');
+          }
         } catch (err) {
           console.error('Session restoration failed:', err);
           localStorage.removeItem('user_id');
@@ -36,14 +57,14 @@ export const AuthProvider = ({ children }) => {
       if (res.data.user_id) {
         localStorage.setItem('user_id', res.data.user_id);
         const profileRes = await API.get(`/profile/${res.data.user_id}`);
-        const userData = {
-          id: profileRes.data[0],
-          name: profileRes.data[1],
-          email: profileRes.data[2]
-        };
+        const userData = normalizeUser(profileRes.data);
+        if (!userData?.id) {
+          return { success: false, error: 'Invalid profile response' };
+        }
         setUser(userData);
         return { success: true };
       }
+      return { success: false, error: 'Invalid login response' };
     } catch (err) {
       return { success: false, error: err.response?.data?.error || 'Login failed' };
     }

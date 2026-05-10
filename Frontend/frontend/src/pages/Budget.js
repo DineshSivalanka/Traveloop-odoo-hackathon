@@ -4,19 +4,15 @@ import API from '../api';
 const Budget = ({ trips }) => {
   const [selectedTripId, setSelectedTripId] = useState(null);
   const [budgetData, setBudgetData] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (selectedTripId) {
-      setLoading(true);
       API.get(`/full_trip/${selectedTripId}`)
         .then(res => {
           setBudgetData(res.data);
-          setLoading(false);
         })
         .catch(err => {
           console.error(err);
-          setLoading(false);
         });
     }
   }, [selectedTripId]);

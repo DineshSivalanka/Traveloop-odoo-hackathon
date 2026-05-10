@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import API from '../api';
 
 const CityDetail = ({ cityId, setTab }) => {
@@ -6,19 +6,11 @@ const CityDetail = ({ cityId, setTab }) => {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (cityId) {
-      loadCityData();
-    }
-  }, [cityId]);
-
-  const loadCityData = () => {
+  const loadCityData = useCallback(() => {
     setLoading(true);
-    // Fetch city info
     API.get(`/cities/${cityId}`)
       .then(res => {
         setCity(res.data);
-        // Fetch activities for this city
         return API.get(`/activities/master/city/${cityId}`);
       })
       .then(res => {
@@ -29,7 +21,13 @@ const CityDetail = ({ cityId, setTab }) => {
         console.error('Failed to load city data:', err);
         setLoading(false);
       });
-  };
+  }, [cityId]);
+
+  useEffect(() => {
+    if (cityId) {
+      loadCityData();
+    }
+  }, [cityId, loadCityData]);
 
   if (loading) {
     return (

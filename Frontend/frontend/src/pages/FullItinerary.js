@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import API from '../api';
 
 const FullItinerary = ({ tripId, setTab }) => {
@@ -9,13 +9,7 @@ const FullItinerary = ({ tripId, setTab }) => {
   const [newItem, setNewItem] = useState('');
   const [newNote, setNewNote] = useState('');
 
-  useEffect(() => {
-    if (tripId) {
-      loadAllData();
-    }
-  }, [tripId]);
-
-  const loadAllData = async () => {
+  const loadAllData = useCallback(async () => {
     setLoading(true);
     try {
       const itRes = await API.get(`/full_trip/${tripId}`);
@@ -31,7 +25,13 @@ const FullItinerary = ({ tripId, setTab }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [tripId]);
+
+  useEffect(() => {
+    if (tripId) {
+      loadAllData();
+    }
+  }, [tripId, loadAllData]);
 
   const addChecklistItem = async () => {
     if (!newItem) return;

@@ -50,13 +50,6 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
     });
   };
 
-  const calculateDays = (start, end) => {
-    const s = new Date(start);
-    const e = new Date(end);
-    const diff = Math.ceil((e - s) / (1000 * 60 * 60 * 24));
-    return diff > 0 ? diff + 1 : 1;
-  };
-
   if (loading) {
     return (
       <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
