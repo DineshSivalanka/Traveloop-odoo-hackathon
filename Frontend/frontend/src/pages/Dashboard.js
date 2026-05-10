@@ -89,7 +89,7 @@ const Dashboard = ({ setTab }) => {
       <div className="glass-card" style={{ marginTop: '2rem' }}>
         <h3>🚀 Quick Actions</h3>
         <div style={{ display: 'flex', gap: '12px', marginTop: '1rem', flexWrap: 'wrap' }}>
-          <button onClick={() => setTab('planner')} style={{ flex: 1 }}>
+          <button onClick={() => setTab('createTrip')} style={{ flex: 1 }}>
             ✨ Plan New Trip
           </button>
           <button onClick={() => setTab('planner')} className="outline" style={{ flex: 1 }}>
@@ -127,7 +127,7 @@ const Dashboard = ({ setTab }) => {
             <p style={{ color: 'var(--text-muted)', marginBottom: '16px' }}>
               Start planning your first adventure.
             </p>
-            <button onClick={() => setTab('planner')}>✨ Create My First Trip</button>
+            <button onClick={() => setTab('createTrip')}>✨ Create My First Trip</button>
           </div>
         )}
       </div>

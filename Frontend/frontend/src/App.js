@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import API from "./api";
+import Dashboard from "./pages/Dashboard";
+import CreateTrip from "./pages/CreateTrip";
 
 function App() {
   const [page, setPage] = useState("login");
+  const [tab, setTab] = useState("home"); // "home" | "planner"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -41,23 +44,47 @@ function App() {
   }, []);
 
   const handleLogin = () => {
+    if (!email || !password) {
+      alert("Please enter email and password.");
+      return;
+    }
     API.post("/login", { email, password })
       .then(res => {
+        if (res.data.error) {
+          alert("Login failed: " + res.data.error);
+          return;
+        }
         localStorage.setItem("user_id", res.data.user_id);
+        setTab("home");
         setPage("dashboard");
         fetchTrips();
       })
-      .catch(() => alert("Invalid login"));
+      .catch(err => {
+        const msg = err.response?.data?.error || err.message || "Login failed. Is the backend running?";
+        alert("❌ " + msg);
+      });
   };
 
   const handleSignup = () => {
+    if (!name || !email || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
     API.post("/signup", { name, email, password })
       .then(res => {
+        if (!res.data.user_id) {
+          alert("Signup failed: unexpected response from server.");
+          return;
+        }
         localStorage.setItem("user_id", res.data.user_id);
+        setTab("home");
         setPage("dashboard");
         fetchTrips();
       })
-      .catch(() => alert("Error signing up"));
+      .catch(err => {
+        const msg = err.response?.data?.error || err.message || "Signup failed. Is the backend running on port 5000?";
+        alert("❌ " + msg);
+      });
   };
 
   const handleLogout = () => {
@@ -181,21 +208,57 @@ function App() {
 
       {page === "dashboard" && localStorage.getItem("user_id") && (
         <>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+          {/* ── Top Nav Bar ── */}
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "24px",
+            padding: "12px 20px",
+            background: "rgba(255,255,255,0.05)",
+            borderRadius: "14px",
+            border: "1px solid rgba(255,255,255,0.1)",
+            backdropFilter: "blur(10px)"
+          }}>
             <h1 className="header-title" style={{ margin: 0 }}>✈️ Traveloop</h1>
-            <button onClick={handleLogout} className="outline">🚪 Logout</button>
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              <button
+                onClick={() => setTab("home")}
+                className={tab === "home" ? "" : "outline"}
+                style={{ padding: "8px 20px" }}
+              >
+                🏠 Home
+              </button>
+              <button
+                onClick={() => setTab("createTrip")}
+                className={tab === "createTrip" ? "" : "outline"}
+                style={{ padding: "8px 20px" }}
+              >
+                ✨ Create Trip
+              </button>
+              <button
+                onClick={() => setTab("planner")}
+                className={tab === "planner" ? "" : "outline"}
+                style={{ padding: "8px 20px" }}
+              >
+                🗺️ Trip Planner
+              </button>
+              <button onClick={handleLogout} className="outline" style={{ padding: "8px 20px" }}>
+                🚪 Logout
+              </button>
+            </div>
           </div>
-          
-          <div className="glass-card" style={{ marginBottom: "40px" }}>
-        <h3>Start a New Journey</h3>
-        <p style={{color: "var(--text-muted)", marginBottom: "15px"}}>Plan your next big adventure.</p>
-        <div className="input-group">
-          <input placeholder="Trip Title (e.g. Europe Tour)" value={title} onChange={e => setTitle(e.target.value)} />
-          <input placeholder="Short Description" value={description} onChange={e => setDescription(e.target.value)} />
-          <button onClick={createTrip}>Create Trip</button>
-        </div>
-      </div>
 
+          {/* ── Home Tab: Dashboard overview ── */}
+          {tab === "home" && <Dashboard setTab={setTab} />}
+
+          {/* ── Create Trip Tab ── */}
+          {tab === "createTrip" && <CreateTrip setTab={setTab} fetchTrips={fetchTrips} />}
+
+          {/* ── Planner Tab: existing full trip planner ── */}
+          {tab === "planner" && (
+          <>
+          
       <div className="grid-layout">
         {/* Left Column: Trips */}
         <div className="column">
@@ -295,6 +358,8 @@ function App() {
           )}
         </div>
       </div>
+          </>
+          )}
         </>
       )}
 
