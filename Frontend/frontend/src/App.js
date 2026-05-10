@@ -8,9 +8,12 @@ function App() {
   
   const [stops, setStops] = useState([]);
   const [city, setCity] = useState("");
+  const [selectedTrip, setSelectedTrip] = useState(null);
 
   const [activities, setActivities] = useState([]);
   const [activityName, setActivityName] = useState("");
+  const [estimatedCost, setEstimatedCost] = useState(500);
+  const [selectedStop, setSelectedStop] = useState(null);
 
   const [fullTrip, setFullTrip] = useState(null);
 
@@ -25,6 +28,7 @@ function App() {
   }, []);
 
   const createTrip = () => {
+    if (!title) return;
     API.post("/trips", {
       user_id: 1,
       title,
@@ -32,29 +36,32 @@ function App() {
       start_date: "2026-05-20",
       end_date: "2026-05-25"
     }).then(() => {
-      alert("Trip created");
+      setTitle("");
+      setDescription("");
       fetchTrips();
     });
   };
 
   const getStops = (tripId) => {
+    setStops([]);
+    setActivities([]);
+    setSelectedStop(null);
     API.get(`/stops/${tripId}`)
-      .then(res => {
-        setStops(res.data);
-      })
+      .then(res => setStops(res.data))
       .catch(err => console.log(err));
   };
 
   const addStop = () => {
+    if (!selectedTrip || !city) return;
     API.post("/stops", {
-      trip_id: 1,
+      trip_id: selectedTrip,
       city_name: city,
       arrival_date: "2026-05-20",
       departure_date: "2026-05-22",
-      stop_order: 1
+      stop_order: stops.length + 1
     }).then(() => {
-      alert("Stop added");
-      getStops(1); 
+      setCity("");
+      getStops(selectedTrip); 
     });
   };
 
@@ -65,117 +72,153 @@ function App() {
   };
 
   const addActivity = () => {
+    if (!selectedStop || !activityName) return;
     API.post("/activities", {
-      stop_id: 1,
+      stop_id: selectedStop,
       activity_name: activityName,
       activity_date: "2026-05-20",
-      estimated_cost: 500,
-      notes: "Fun activity"
+      estimated_cost: estimatedCost,
+      notes: "Planned activity"
     }).then(() => {
-      alert("Activity added");
-      getActivities(1);
+      setActivityName("");
+      setEstimatedCost(500);
+      getActivities(selectedStop);
     });
   };
 
   const getFullTripDemo = () => {
-    API.get("/full_trip/1")
+    if (!selectedTrip) {
+      alert("Please select a trip first.");
+      return;
+    }
+    API.get(`/full_trip/${selectedTrip}`)
       .then(res => {
         setFullTrip(res.data);
-        console.log("Full Demo Trip Data:", res.data);
       })
-      .catch(err => console.log(err));
+      .catch(err => alert("Error loading full trip. Please create one first."));
   };
 
+  let total = 0;
+  if (fullTrip) {
+    fullTrip.details.forEach(item => {
+      item.activities.forEach(act => {
+        total += parseFloat(act[4] || 0);
+      });
+    });
+  }
+
   return (
-    <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
-      <h1>✈️ Traveloop Planner</h1>
+    <div className="app-container">
+      <h1 className="header-title">✈️ Traveloop</h1>
       
-      <div style={{ marginBottom: "20px" }}>
-        <h3>1. Create Trip</h3>
-        <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} style={{ marginRight: "10px" }} />
-        <input placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} style={{ marginRight: "10px" }} />
-        <button onClick={createTrip}>Create Trip</button>
+      <div className="glass-card" style={{ marginBottom: "40px" }}>
+        <h3>Start a New Journey</h3>
+        <p style={{color: "var(--text-muted)", marginBottom: "15px"}}>Plan your next big adventure.</p>
+        <div className="input-group">
+          <input placeholder="Trip Title (e.g. Europe Tour)" value={title} onChange={e => setTitle(e.target.value)} />
+          <input placeholder="Short Description" value={description} onChange={e => setDescription(e.target.value)} />
+          <button onClick={createTrip}>Create Trip</button>
+        </div>
       </div>
 
-      <hr />
-
-      <div style={{ display: "flex", gap: "20px" }}>
+      <div className="grid-layout">
         {/* Left Column: Trips */}
-        <div style={{ flex: 1 }}>
-          <h2>Trips</h2>
+        <div className="column">
+          <h2 className="column-header">1. Select Trip</h2>
+          {trips.length === 0 && <p style={{color: "var(--text-muted)"}}>No trips yet. Create one above!</p>}
+          
           {trips.map((trip, index) => (
-            <div key={index} style={{ border: "1px solid #ccc", margin: "10px 0", padding: "10px", borderRadius: "5px" }}>
+            <div key={index} className="item-card" style={{ border: selectedTrip === trip[0] ? "1px solid var(--accent)" : "" }}>
               <h3>{trip[2]}</h3>
               <p>{trip[3]}</p>
-              <button onClick={() => getStops(trip[0])}>
-                View Stops
+              <button className={selectedTrip === trip[0] ? "" : "outline"} onClick={() => {
+                setSelectedTrip(trip[0]);
+                getStops(trip[0]);
+              }}>
+                {selectedTrip === trip[0] ? "Selected" : "View Stops"}
               </button>
             </div>
           ))}
         </div>
 
         {/* Middle Column: Stops */}
-        <div style={{ flex: 1 }}>
-          <h2>Stops</h2>
+        <div className="column" style={{ opacity: selectedTrip ? 1 : 0.4, pointerEvents: selectedTrip ? "auto" : "none" }}>
+          <h2 className="column-header">2. Add Cities</h2>
           
-          <div style={{ marginBottom: "10px" }}>
-            <input placeholder="City" value={city} onChange={e => setCity(e.target.value)} style={{ marginRight: "10px" }} />
-            <button onClick={addStop}>Add Stop</button>
+          <div className="input-group">
+            <input placeholder="City Name" value={city} onChange={e => setCity(e.target.value)} />
+            <button onClick={addStop}>Add</button>
           </div>
 
           {stops.map((stop, index) => (
-            <div key={index} style={{ border: "1px solid #aaa", margin: "10px 0", padding: "10px", backgroundColor: "#f9f9f9", borderRadius: "5px" }}>
-              <p><strong>{stop[2]}</strong> (City)</p>
-              <p>{stop[3]} → {stop[4]}</p>
-              <button onClick={() => getActivities(stop[0])}>
-                View Activities
+            <div key={index} className="item-card" style={{ border: selectedStop === stop[0] ? "1px solid var(--accent)" : "" }}>
+              <h3 style={{display: "flex", alignItems: "center", gap: "8px"}}>📍 {stop[2]}</h3>
+              <p>{stop[3]} to {stop[4]}</p>
+              <button className={selectedStop === stop[0] ? "" : "outline"} onClick={() => {
+                setSelectedStop(stop[0]);
+                getActivities(stop[0]);
+              }}>
+                {selectedStop === stop[0] ? "Selected" : "View Activities"}
               </button>
             </div>
           ))}
         </div>
 
         {/* Right Column: Activities */}
-        <div style={{ flex: 1 }}>
-          <h2>Activities</h2>
+        <div className="column" style={{ opacity: selectedStop ? 1 : 0.4, pointerEvents: selectedStop ? "auto" : "none" }}>
+          <h2 className="column-header">3. Plan Activities</h2>
           
-          <div style={{ marginBottom: "10px" }}>
-            <input placeholder="Activity" value={activityName} onChange={e => setActivityName(e.target.value)} style={{ marginRight: "10px" }} />
-            <button onClick={addActivity}>Add Activity</button>
+          <div className="input-group" style={{ flexDirection: "column" }}>
+            <input placeholder="Activity (e.g. Scuba Diving)" value={activityName} onChange={e => setActivityName(e.target.value)} style={{ width: "100%", marginBottom: "0px" }} />
+            <div style={{ display: "flex", gap: "12px", alignItems: "center", marginTop: "12px" }}>
+              <span style={{color: "var(--text-muted)"}}>Cost (₹):</span>
+              <input type="number" value={estimatedCost} onChange={e => setEstimatedCost(e.target.value)} style={{ width: "80px" }} />
+              <button onClick={addActivity} style={{ flex: 1 }}>Add</button>
+            </div>
           </div>
 
           {activities.map((act, index) => (
-            <div key={index} style={{ border: "1px solid #666", margin: "10px 0", padding: "10px", backgroundColor: "#eef", borderRadius: "5px" }}>
-              <p><strong>{act[2]}</strong></p>
-              <p>Cost: ₹{act[4]}</p>
+            <div key={index} className="item-card">
+              <h3>⚡ {act[2]}</h3>
+              <p>Estimated Cost: <strong style={{color: "#10b981"}}>₹{act[4]}</strong></p>
             </div>
           ))}
         </div>
       </div>
 
-      <hr style={{ margin: "40px 0" }} />
+      <div className="demo-section">
+        <div className="demo-box">
+          <h2 style={{fontSize: "2.5rem", marginBottom: "10px"}}>🔥 The "Mic Drop" API Demo</h2>
+          <p style={{color: "var(--text-muted)", marginBottom: "30px", fontSize: "1.1rem"}}>
+            This single API call fetches your Trip, Stops, Activities, and calculates your Budget!
+          </p>
+          <button onClick={getFullTripDemo} style={{ padding: "16px 32px", fontSize: "1.2rem", borderRadius: "12px", boxShadow: "0 10px 20px rgba(59, 130, 246, 0.4)" }}>
+            Fetch Complete Itinerary & Budget
+          </button>
+          
+          {fullTrip && (
+            <div>
+              <h2>{fullTrip.trip[2]}</h2>
+              <h2>Total Trip Cost: ₹{total}</h2>
 
-      <div style={{ textAlign: "center", backgroundColor: "#333", color: "#fff", padding: "20px", borderRadius: "10px" }}>
-        <h2>🔥 DEMO READY API 🔥</h2>
-        <p>Get the entire nested trip JSON in one single call (Check console too!)</p>
-        <button onClick={getFullTripDemo} style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer" }}>
-          Load Full Trip Itinerary
-        </button>
-        
-        {fullTrip && (
-          <div style={{ marginTop: "20px", textAlign: "left", backgroundColor: "#222", padding: "20px", borderRadius: "5px" }}>
-            <h3>{fullTrip.trip[2]}</h3>
-            {fullTrip.details.map((detail, idx) => (
-              <div key={idx} style={{ marginLeft: "20px", marginTop: "10px", paddingLeft: "10px", borderLeft: "2px solid #555" }}>
-                <h4>📍 {detail.stop[2]}</h4>
-                <ul>
-                  {detail.activities.map((act, aIdx) => (
-                    <li key={aIdx}>{act[2]} (₹{act[4]})</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        )}
+              {fullTrip.details.map((item, index) => {
+                let cityTotal = item.activities.reduce((sum, act) => sum + parseFloat(act[4] || 0), 0);
+
+                return (
+                  <div key={index} style={{border: "1px solid gray", margin: "10px", padding: "10px"}}>
+                    <h3>{item.stop[2]}</h3>
+
+                    {item.activities.map((act, i) => (
+                      <p key={i}>{act[2]} — ₹{act[4]}</p>
+                    ))}
+
+                    <p><b>City Cost: ₹{cityTotal}</b></p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
     </div>
