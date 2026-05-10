@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import API from "./api";
 import Dashboard from "./pages/Dashboard";
+<<<<<<< HEAD
+=======
+import CreateTrip from "./pages/CreateTrip";
+>>>>>>> sai
 
 function App() {
   const [page, setPage] = useState("login");
+  const [tab, setTab] = useState("home"); // "home" | "planner"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -42,35 +47,61 @@ function App() {
   }, []);
 
   const handleLogin = () => {
+<<<<<<< HEAD
     if (!email.includes("@") || password.length < 4) {
       alert("Please enter a valid email and a password of at least 4 characters.");
+=======
+    if (!email || !password) {
+      alert("Please enter email and password.");
+>>>>>>> sai
       return;
     }
     API.post("/login", { email, password })
       .then(res => {
+        if (res.data.error) {
+          alert("Login failed: " + res.data.error);
+          return;
+        }
         localStorage.setItem("user_id", res.data.user_id);
+        setTab("home");
         setPage("dashboard");
         fetchTrips();
       })
-      .catch(() => alert("Invalid login"));
+      .catch(err => {
+        const msg = err.response?.data?.error || err.message || "Login failed. Is the backend running?";
+        alert("❌ " + msg);
+      });
   };
 
   const handleSignup = () => {
+<<<<<<< HEAD
     if (!name.trim()) {
       alert("Please enter your name.");
       return;
     }
     if (!email.includes("@") || password.length < 4) {
       alert("Please enter a valid email and a password of at least 4 characters.");
+=======
+    if (!name || !email || !password) {
+      alert("Please fill in all fields.");
+>>>>>>> sai
       return;
     }
     API.post("/signup", { name, email, password })
       .then(res => {
+        if (!res.data.user_id) {
+          alert("Signup failed: unexpected response from server.");
+          return;
+        }
         localStorage.setItem("user_id", res.data.user_id);
+        setTab("home");
         setPage("dashboard");
         fetchTrips();
       })
-      .catch(() => alert("Error signing up"));
+      .catch(err => {
+        const msg = err.response?.data?.error || err.message || "Signup failed. Is the backend running on port 5000?";
+        alert("❌ " + msg);
+      });
   };
 
   const handleLogout = () => {
@@ -197,6 +228,7 @@ function App() {
 
       {(page === "dashboard" || page === "planner") && localStorage.getItem("user_id") && (
         <>
+<<<<<<< HEAD
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <h1 className="header-title" style={{ margin: 0, cursor: "pointer" }} onClick={() => setPage("dashboard")}>✈️ Traveloop</h1>
             <div style={{ display: "flex", gap: "10px" }}>
@@ -219,7 +251,59 @@ function App() {
           <button onClick={createTrip}>Create Trip</button>
         </div>
       </div>
+=======
+          {/* ── Top Nav Bar ── */}
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "24px",
+            padding: "12px 20px",
+            background: "rgba(255,255,255,0.05)",
+            borderRadius: "14px",
+            border: "1px solid rgba(255,255,255,0.1)",
+            backdropFilter: "blur(10px)"
+          }}>
+            <h1 className="header-title" style={{ margin: 0 }}>✈️ Traveloop</h1>
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              <button
+                onClick={() => setTab("home")}
+                className={tab === "home" ? "" : "outline"}
+                style={{ padding: "8px 20px" }}
+              >
+                🏠 Home
+              </button>
+              <button
+                onClick={() => setTab("createTrip")}
+                className={tab === "createTrip" ? "" : "outline"}
+                style={{ padding: "8px 20px" }}
+              >
+                ✨ Create Trip
+              </button>
+              <button
+                onClick={() => setTab("planner")}
+                className={tab === "planner" ? "" : "outline"}
+                style={{ padding: "8px 20px" }}
+              >
+                🗺️ Trip Planner
+              </button>
+              <button onClick={handleLogout} className="outline" style={{ padding: "8px 20px" }}>
+                🚪 Logout
+              </button>
+            </div>
+          </div>
+>>>>>>> sai
 
+          {/* ── Home Tab: Dashboard overview ── */}
+          {tab === "home" && <Dashboard setTab={setTab} />}
+
+          {/* ── Create Trip Tab ── */}
+          {tab === "createTrip" && <CreateTrip setTab={setTab} fetchTrips={fetchTrips} />}
+
+          {/* ── Planner Tab: existing full trip planner ── */}
+          {tab === "planner" && (
+          <>
+          
       <div className="grid-layout">
         {/* Left Column: Trips */}
         <div className="column">
@@ -319,7 +403,11 @@ function App() {
           )}
         </div>
       </div>
+<<<<<<< HEAD
             </>
+=======
+          </>
+>>>>>>> sai
           )}
         </>
       )}

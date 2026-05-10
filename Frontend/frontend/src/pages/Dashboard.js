@@ -66,7 +66,7 @@ const Dashboard = ({ setTab }) => {
       <div className="glass-card" style={{ marginTop: '2rem' }}>
         <h3>🚀 Quick Actions</h3>
         <div style={{ display: 'flex', gap: '12px', marginTop: '1rem', flexWrap: 'wrap' }}>
-          <button onClick={() => setTab('planner')} style={{ flex: 1 }}>
+          <button onClick={() => setTab('createTrip')} style={{ flex: 1 }}>
             ✨ Plan New Trip
           </button>
           <button onClick={() => setTab('planner')} className="outline" style={{ flex: 1 }}>
@@ -98,6 +98,7 @@ const Dashboard = ({ setTab }) => {
             </div>
           ))}
 
+<<<<<<< HEAD
           {!data.loading && data.trips.length === 0 && (
             <div className="glass-card" style={{ textAlign: 'center', padding: '40px' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🌍</div>
@@ -128,6 +129,18 @@ const Dashboard = ({ setTab }) => {
             </div>
           )}
         </div>
+=======
+        {!loading && trips.length === 0 && (
+          <div className="glass-card" style={{ textAlign: 'center', padding: '40px' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🌍</div>
+            <h3>No trips yet!</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '16px' }}>
+              Start planning your first adventure.
+            </p>
+            <button onClick={() => setTab('createTrip')}>✨ Create My First Trip</button>
+          </div>
+        )}
+>>>>>>> sai
       </div>
     </div>
   );
