@@ -4,130 +4,152 @@ import API from '../api';
 const CreateTrip = ({ setTab, fetchTrips }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [coverPhoto, setCoverPhoto] = useState(null);
+  const [startDate, setStartDate] = useState('2026-05-20');
+  const [endDate, setEndDate] = useState('2026-05-25');
+  const [budget, setBudget] = useState('');
+  const [coverImage, setCoverImage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSave = () => {
+  const handleSave = (e) => {
+    e.preventDefault();
     if (!title || !startDate || !endDate) {
-      alert("Please provide at least a Trip Name, Start Date, and End Date.");
+      setError("Please fill in the trip name and dates.");
       return;
     }
-
+    
     setLoading(true);
+    setError('');
+    
     const userId = localStorage.getItem("user_id");
-
     API.post("/trips", {
       user_id: userId,
       title,
       description,
       start_date: startDate,
-      end_date: endDate
-    })
-      .then(res => {
-        setLoading(false);
-        fetchTrips(); // Refresh the list of trips
-        setTab("planner"); // Navigate to planner so user can add stops to the trip
-      })
-      .catch(err => {
-        setLoading(false);
-        console.error("Error creating trip:", err);
-        alert("Failed to create trip. Ensure backend is running.");
-      });
+      end_date: endDate,
+      budget: budget ? parseFloat(budget) : 0,
+      cover_image_url: coverImage
+    }).then(() => {
+      setLoading(false);
+      fetchTrips();
+      setTab("home");
+    }).catch(err => {
+      console.error(err);
+      setError("Failed to create trip. Please check your connection.");
+      setLoading(false);
+    });
   };
 
   return (
-    <div className="page-container" style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
-      <h1 style={{ marginBottom: '1rem', textAlign: 'center' }}>✨ Create a New Trip</h1>
-      <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', textAlign: 'center' }}>
-        Begin the process of creating a personalized travel plan.
-      </p>
+    <div className="animate-fade-in" style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+      <header style={{ marginBottom: '3rem', textAlign: 'center' }}>
+        <h1 className="header-title" style={{ fontSize: '2.5rem' }}>✨ Plan New Adventure</h1>
+        <p style={{ opacity: 0.6 }}>Design your journey from scratch</p>
+      </header>
 
-      <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        
-        {/* Trip Name */}
-        <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontWeight: 'bold' }}>Trip Name <span style={{ color: 'red' }}>*</span></label>
-          <input 
-            type="text" 
-            placeholder="e.g. Summer in Europe" 
-            value={title} 
-            onChange={(e) => setTitle(e.target.value)} 
-          />
-        </div>
-
-        {/* Travel Dates */}
-        <div style={{ display: 'flex', gap: '15px' }}>
-          <div className="form-group" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: 'bold' }}>Start Date <span style={{ color: 'red' }}>*</span></label>
+      <div className="glass-card" style={{ padding: '40px' }}>
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+          
+          <div className="form-group">
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: 0.8 }}>Trip Name</label>
             <input 
-              type="date" 
-              value={startDate} 
-              onChange={(e) => setStartDate(e.target.value)} 
+              placeholder="e.g., European Summer Adventure" 
+              value={title} 
+              onChange={e => setTitle(e.target.value)} 
+              required
             />
           </div>
-          <div className="form-group" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontWeight: 'bold' }}>End Date <span style={{ color: 'red' }}>*</span></label>
-            <input 
-              type="date" 
-              value={endDate} 
-              onChange={(e) => setEndDate(e.target.value)} 
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: 0.8 }}>Start Date</label>
+              <input 
+                type="date" 
+                value={startDate} 
+                onChange={e => setStartDate(e.target.value)} 
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: 0.8 }}>End Date</label>
+              <input 
+                type="date" 
+                value={endDate} 
+                onChange={e => setEndDate(e.target.value)} 
+                required
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: 0.8 }}>Budget (Optional)</label>
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', color: 'var(--accent)' }}>₹</span>
+                <input 
+                  type="number" 
+                  placeholder="0.00" 
+                  value={budget} 
+                  onChange={e => setBudget(e.target.value)} 
+                  style={{ paddingLeft: '35px' }}
+                />
+              </div>
+            </div>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: 0.8 }}>Cover Image URL</label>
+              <input 
+                type="url" 
+                placeholder="https://images.unsplash.com/..." 
+                value={coverImage} 
+                onChange={e => setCoverImage(e.target.value)} 
+              />
+              {coverImage && (
+                <div style={{ marginTop: '15px', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--card-border)', height: '150px' }}>
+                  <img 
+                    src={coverImage} 
+                    alt="Trip Preview" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=800'; }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', opacity: 0.8 }}>Description</label>
+            <textarea 
+              placeholder="What's this trip about? Share your goals, interests, or any special notes..." 
+              value={description} 
+              onChange={e => setDescription(e.target.value)} 
+              style={{ 
+                minHeight: '120px', 
+                background: 'rgba(0,0,0,0.2)', 
+                color: '#fff', 
+                border: '1px solid var(--card-border)', 
+                borderRadius: '12px', 
+                padding: '15px',
+                lineHeight: '1.6'
+              }} 
             />
           </div>
-        </div>
 
-        {/* Trip Description */}
-        <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontWeight: 'bold' }}>Description</label>
-          <textarea 
-            placeholder="What's the main goal or vibe of this trip?" 
-            value={description} 
-            onChange={(e) => setDescription(e.target.value)}
-            style={{
-              padding: '12px',
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              background: 'rgba(0, 0, 0, 0.2)',
-              color: 'var(--text-light)',
-              minHeight: '100px',
-              fontFamily: 'inherit'
-            }}
-          />
-        </div>
+          {error && (
+            <div style={{ padding: '15px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', borderRadius: '8px', color: '#ef4444', fontSize: '0.9rem' }}>
+              ⚠️ {error}
+            </div>
+          )}
 
-        {/* Cover Photo Upload */}
-        <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontWeight: 'bold' }}>Cover Photo (Optional)</label>
-          <input 
-            type="file" 
-            accept="image/*"
-            onChange={(e) => setCoverPhoto(e.target.files[0])}
-            style={{
-              padding: '10px',
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px dashed rgba(255,255,255,0.3)',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
-          />
-          {coverPhoto && <p style={{ fontSize: '0.85rem', color: '#10b981' }}>Selected: {coverPhoto.name}</p>}
-        </div>
-
-        {/* Save Button */}
-        <button 
-          onClick={handleSave} 
-          disabled={loading}
-          style={{ 
-            marginTop: '10px', 
-            padding: '14px', 
-            fontSize: '1.1rem',
-            opacity: loading ? 0.7 : 1
-          }}
-        >
-          {loading ? 'Saving...' : '💾 Save Trip'}
-        </button>
-
+          <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
+            <button type="submit" style={{ flex: 2 }} disabled={loading}>
+              {loading ? 'Creating Trip...' : '✨ Create Trip'}
+            </button>
+            <button type="button" className="outline" onClick={() => setTab("home")} style={{ flex: 1 }}>
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

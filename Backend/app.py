@@ -1,200 +1,48 @@
-from flask import Flask, request, jsonify
+from flask import Flask
 from flask_cors import CORS
-from db import connect_db
-from routes.user_routes import user_bp
-from routes.city_routes import city_bp
+
+from routes.user_routes      import user_bp
+from routes.city_routes      import city_bp
+from routes.trip_routes      import trip_bp
+from routes.stop_routes      import stop_bp
+from routes.activity_routes  import activity_bp
+from routes.checklist_routes import checklist_bp
+from routes.note_routes      import note_bp
 from routes.dashboard_routes import dashboard_bp
 
 app = Flask(__name__)
 CORS(app)
 
+# Register all blueprints
 app.register_blueprint(user_bp)
 app.register_blueprint(city_bp)
+app.register_blueprint(trip_bp)
+app.register_blueprint(stop_bp)
+app.register_blueprint(activity_bp)
+app.register_blueprint(checklist_bp)
+app.register_blueprint(note_bp)
 app.register_blueprint(dashboard_bp)
 
-@app.route("/users", methods=["GET"])
-def get_users():
-    conn = connect_db()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM users;")
-    users = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    return jsonify(users)
-
+# ── API Aliases for Frontend Compatibility ──────────────────
 @app.route("/users", methods=["POST"])
-def add_user():
-    data = request.get_json()
-
-    name = data["name"]
-    email = data["email"]
-    password = data["password"]
-
-    conn = connect_db()
-    cur = conn.cursor()
-
-    cur.execute(
-        "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
-        (name, email, password)
-    )
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return {"message": "User added successfully"}
-
-@app.route("/trips", methods=["POST"])
-def create_trip():
-    data = request.get_json()
-
-    user_id = data["user_id"]
-    title = data["title"]
-    description = data["description"]
-    start_date = data["start_date"]
-    end_date = data["end_date"]
-
-    conn = connect_db()
-    cur = conn.cursor()
-
-    cur.execute(
-        "INSERT INTO trips (user_id, title, description, start_date, end_date) VALUES (%s, %s, %s, %s, %s) RETURNING id",
-        (user_id, title, description, start_date, end_date)
-    )
-    trip_id = cur.fetchone()[0]
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return jsonify({"trip_id": trip_id})
-
-@app.route("/trips/<int:user_id>", methods=["GET"])
-def get_trips(user_id):
-    conn = connect_db()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM trips WHERE user_id=%s", (user_id,))
-    trips = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    return jsonify(trips)
-
-@app.route("/stops", methods=["POST"])
-def add_stop():
-    data = request.get_json()
-
-    trip_id = data["trip_id"]
-    city_name = data["city_name"]
-    arrival_date = data["arrival_date"]
-    departure_date = data["departure_date"]
-    stop_order = data["stop_order"]
-
-    conn = connect_db()
-    cur = conn.cursor()
-
-    cur.execute(
-        "INSERT INTO trip_stops (trip_id, city_name, arrival_date, departure_date, stop_order) VALUES (%s, %s, %s, %s, %s)",
-        (trip_id, city_name, arrival_date, departure_date, stop_order)
-    )
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return {"message": "Stop added"}
-
-@app.route("/stops/<int:trip_id>", methods=["GET"])
-def get_stops(trip_id):
-    conn = connect_db()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM trip_stops WHERE trip_id = %s ORDER BY stop_order;", (trip_id,))
-    stops = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    return jsonify(stops)
-
-@app.route("/activities", methods=["POST"])
-def add_activity():
-    data = request.get_json()
-
-    conn = connect_db()
-    cur = conn.cursor()
-
-    cur.execute(
-        "INSERT INTO activities (stop_id, activity_name, activity_date, estimated_cost, notes) VALUES (%s, %s, %s, %s, %s)",
-        (
-            data["stop_id"],
-            data["activity_name"],
-            data["activity_date"],
-            data["estimated_cost"],
-            data["notes"]
-        )
-    )
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return {"message": "Activity added"}
-
-@app.route("/activities/<int:stop_id>", methods=["GET"])
-def get_activities(stop_id):
-    conn = connect_db()
-    cur = conn.cursor()
-
-    cur.execute(
-        "SELECT * FROM activities WHERE stop_id = %s;",
-        (stop_id,)
-    )
-    activities = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    return jsonify(activities)
+def users_alias():
+    from routes.user_routes import signup
+    return signup()
 
 @app.route("/full_trip/<int:trip_id>", methods=["GET"])
-def get_full_trip(trip_id):
-    conn = connect_db()
-    cur = conn.cursor()
+def full_trip_alias(trip_id):
+    from routes.trip_routes import full_trip
+    return full_trip(trip_id)
 
-    # Get trip
-    cur.execute("SELECT * FROM trips WHERE id = %s;", (trip_id,))
-    trip = cur.fetchone()
+@app.route("/checklist", methods=["POST"])
+def checklist_alias():
+    from routes.checklist_routes import add_item
+    return add_item()
 
-    # Get stops
-    cur.execute("SELECT * FROM trip_stops WHERE trip_id = %s ORDER BY stop_order;", (trip_id,))
-    stops = cur.fetchall()
-
-    full_data = []
-
-    for stop in stops:
-        stop_id = stop[0]
-
-        cur.execute("SELECT * FROM activities WHERE stop_id = %s;", (stop_id,))
-        activities = cur.fetchall()
-
-        full_data.append({
-            "stop": stop,
-            "activities": activities
-        })
-
-    cur.close()
-    conn.close()
-
-    return {
-        "trip": trip,
-        "details": full_data
-    }
+@app.route("/notes", methods=["POST"])
+def notes_alias():
+    from routes.note_routes import add_note
+    return add_note()
 
 if __name__ == "__main__":
     app.run(debug=True)

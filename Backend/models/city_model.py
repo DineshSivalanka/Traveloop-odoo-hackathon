@@ -1,16 +1,78 @@
 from db import connect_db
 
-def add_city(name, country, cost_index):
+def search_cities(query):
     conn = connect_db()
     cur = conn.cursor()
-
     cur.execute(
-        "INSERT INTO cities (name, country, cost_index) VALUES (%s, %s, %s) RETURNING id",
-        (name, country, cost_index)
+        """
+        SELECT id, name, country, region, cost_index, popularity, description
+        FROM cities
+        WHERE name ILIKE %s OR country ILIKE %s OR region ILIKE %s
+        ORDER BY popularity DESC
+        LIMIT 20
+        """,
+        (f"%{query}%", f"%{query}%", f"%{query}%")
     )
-
-    city_id = cur.fetchone()[0]
-    conn.commit()
+    rows = cur.fetchall()
     cur.close()
     conn.close()
-    return city_id
+    return [_city_row(r) for r in rows]
+
+def get_all_cities(region=None, country=None):
+    conn = connect_db()
+    cur = conn.cursor()
+    if region:
+        cur.execute(
+            "SELECT id, name, country, region, cost_index, popularity, description FROM cities WHERE region ILIKE %s ORDER BY popularity DESC",
+            (f"%{region}%",)
+        )
+    elif country:
+        cur.execute(
+            "SELECT id, name, country, region, cost_index, popularity, description FROM cities WHERE country ILIKE %s ORDER BY popularity DESC",
+            (f"%{country}%",)
+        )
+    else:
+        cur.execute(
+            "SELECT id, name, country, region, cost_index, popularity, description FROM cities ORDER BY popularity DESC LIMIT 50"
+        )
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [_city_row(r) for r in rows]
+
+def get_city_by_id(city_id):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT id, name, country, region, cost_index, popularity, description, image_url FROM cities WHERE id = %s",
+        (city_id,)
+    )
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+    if row:
+        return {
+            "id": row[0], "name": row[1], "country": row[2],
+            "region": row[3], "cost_index": float(row[4] or 0),
+            "popularity": row[5], "description": row[6], "image_url": row[7]
+        }
+    return None
+
+def get_popular_cities(limit=6):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT id, name, country, region, cost_index, popularity, description FROM cities ORDER BY popularity DESC LIMIT %s",
+        (limit,)
+    )
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [_city_row(r) for r in rows]
+
+def _city_row(r):
+    return {
+        "id": r[0], "name": r[1], "country": r[2],
+        "region": r[3], "cost_index": float(r[4] or 0),
+        "popularity": r[5], "description": r[6]
+    }
