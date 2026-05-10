@@ -24,11 +24,15 @@ CREATE TABLE IF NOT EXISTS cities (
     name        VARCHAR(120)  NOT NULL,
     country     VARCHAR(120),
     region      VARCHAR(120),
-    cost_index  NUMERIC(6,2)  DEFAULT 0,
+    cost_index  NUMERIC(8,2)  DEFAULT 0,
     popularity  INTEGER       DEFAULT 0,
     image_url   TEXT,
     description TEXT
 );
+
+-- Allow larger city cost values used in seed data (e.g. 12000)
+ALTER TABLE cities
+    ALTER COLUMN cost_index TYPE NUMERIC(8,2);
 
 -- ─────────────────────────────────────────
 -- TABLE 3: trips
@@ -128,6 +132,13 @@ CREATE INDEX IF NOT EXISTS idx_master_city     ON activities_master(city_id);
 -- ============================================================
 --  SEED DATA – Cities
 -- ============================================================
+
+
+-- alter First
+ALTER TABLE cities
+ALTER COLUMN cost_index TYPE NUMERIC(8,2);
+
+
 INSERT INTO cities (name, country, region, cost_index, popularity, description) VALUES
 ('Mumbai',         'India',        'South Asia',      2500, 95, 'Financial capital of India with iconic landmarks.'),
 ('Delhi',          'India',        'South Asia',      2200, 92, 'India''s capital with historic Mughal architecture.'),
