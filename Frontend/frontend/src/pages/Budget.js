@@ -4,15 +4,19 @@ import API from '../api';
 const Budget = ({ trips }) => {
   const [selectedTripId, setSelectedTripId] = useState(null);
   const [budgetData, setBudgetData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (selectedTripId) {
+      setLoading(true);
       API.get(`/full_trip/${selectedTripId}`)
         .then(res => {
           setBudgetData(res.data);
+          setLoading(false);
         })
         .catch(err => {
           console.error(err);
+          setLoading(false);
         });
     }
   }, [selectedTripId]);
@@ -25,52 +29,176 @@ const Budget = ({ trips }) => {
   };
 
   const total = calculateTotal();
-  const budgetLimit = 50000; 
+  const tripBudget = budgetData?.trip?.budget || 0;
+  const isOverBudget = tripBudget > 0 && total > tripBudget;
+  const budgetPercentage = tripBudget > 0 ? Math.min((total / tripBudget) * 100, 100) : 0;
 
   return (
-    <div className="animate-fade-in" style={{ padding: '0 1rem' }}>
-      <h1 style={{ marginBottom: '2rem' }}>💰 Budget Analytics</h1>
+    <div className="animate-fade-in" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+      
+      <header style={{ marginBottom: '40px' }}>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '8px' }}>
+          💰 Budget <span style={{ background: 'var(--accent-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Analytics</span>
+        </h1>
+        <p style={{ color: 'var(--text-muted)' }}>Visualize your travel expenses and keep track of your spending.</p>
+      </header>
 
-      <div className="glass-card" style={{ marginBottom: '30px' }}>
-        <h3>Select a Trip</h3>
-        <div style={{ display: 'flex', gap: '10px', marginTop: '15px', flexWrap: 'wrap' }}>
-          {trips.map((trip, idx) => (
-            <button key={idx} className={selectedTripId === trip.id ? "" : "outline"} onClick={() => setSelectedTripId(trip.id)}>
-              {trip.title}
-            </button>
-          ))}
+      {/* ── Trip Selector ── */}
+      <div className="glass-card" style={{ padding: '32px', borderRadius: '28px', marginBottom: '40px', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)' }}>
+          Select Adventure to Analyze
+        </h3>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          {trips.length === 0 ? (
+            <p style={{ opacity: 0.5, fontStyle: 'italic' }}>No trips found. Create a trip first to see analytics.</p>
+          ) : (
+            trips.map((trip) => (
+              <button 
+                key={trip.id} 
+                className={selectedTripId === trip.id ? "" : "outline"} 
+                onClick={() => setSelectedTripId(trip.id)}
+                style={{ 
+                  padding: '12px 24px', 
+                  borderRadius: '14px',
+                  background: selectedTripId === trip.id ? 'var(--accent-gradient)' : 'transparent',
+                  border: selectedTripId === trip.id ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                  transition: 'all 0.2s ease',
+                  fontSize: '0.9rem'
+                }}
+              >
+                {trip.title}
+              </button>
+            ))
+          )}
         </div>
       </div>
 
-      {budgetData && (
+      {loading && (
+        <div style={{ textAlign: 'center', padding: '60px' }}>
+          <div className="animate-spin" style={{ fontSize: '2.5rem', marginBottom: '16px' }}>💰</div>
+          <p style={{ color: 'var(--text-muted)' }}>Calculating expenses...</p>
+        </div>
+      )}
+
+      {!loading && budgetData && (
         <div className="animate-slide-up">
-          <div className="grid-layout">
-            <div className="glass-card" style={{ borderLeft: '4px solid #10b981', textAlign: 'center' }}>
-              <p style={{ color: 'var(--text-muted)' }}>Total Cost</p>
-              <h1 style={{ fontSize: '3rem', color: total > budgetLimit ? '#ef4444' : '#10b981' }}>₹{total}</h1>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
+            
+            {/* ── Main Budget Overview ── */}
+            <div className="glass-card" style={{ 
+              padding: '40px', 
+              borderRadius: '32px', 
+              textAlign: 'center',
+              background: 'rgba(15, 23, 42, 0.6)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{ position: 'absolute', top: '-10px', left: '-10px', width: '100px', height: '100px', background: isOverBudget ? 'rgba(239, 68, 68, 0.05)' : 'rgba(52, 211, 153, 0.05)', filter: 'blur(40px)', borderRadius: '50%' }}></div>
+              
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                Total Estimated Cost
+              </p>
+              <h1 style={{ 
+                fontSize: '4.2rem', 
+                fontWeight: '900', 
+                margin: '0 0 16px 0', 
+                color: isOverBudget ? '#f87171' : '#34d399',
+                letterSpacing: '-2px',
+                lineHeight: 1
+              }}>
+                ₹{total.toLocaleString()}
+              </h1>
+              
+              {tripBudget > 0 && (
+                <div style={{ padding: '24px', background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.9rem' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Budget Limit: ₹{tripBudget.toLocaleString()}</span>
+                    <span style={{ fontWeight: '700', color: isOverBudget ? '#f87171' : 'var(--accent-light)' }}>
+                      {Math.round((total/tripBudget)*100)}%
+                    </span>
+                  </div>
+                  <div style={{ height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
+                    <div style={{ 
+                      width: `${budgetPercentage}%`, 
+                      height: '100%', 
+                      background: isOverBudget ? 'linear-gradient(90deg, #f87171, #ef4444)' : 'var(--accent-gradient)',
+                      boxShadow: isOverBudget ? '0 0 15px rgba(239, 68, 68, 0.4)' : '0 0 15px rgba(99, 102, 241, 0.3)'
+                    }}></div>
+                  </div>
+                  {isOverBudget && (
+                    <p style={{ margin: '12px 0 0 0', fontSize: '0.8rem', color: '#f87171', fontWeight: '600' }}>
+                      ⚠️ You are ₹{(total - tripBudget).toLocaleString()} over budget!
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
-            <div className="glass-card">
-              <h3>Breakdown</h3>
-              <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {/* ── Breakdown List ── */}
+            <div className="glass-card" style={{ padding: '32px', borderRadius: '32px' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '24px' }}>🗺️ Cost Breakdown by City</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {budgetData.details.map((item, idx) => {
                   const cityTotal = item.activities.reduce((sum, act) => sum + parseFloat(act.estimated_cost || 0), 0);
                   const percentage = total > 0 ? (cityTotal / total) * 100 : 0;
                   return (
-                    <div key={idx}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-                        <span>{item.stop.city_name}</span>
-                        <span>₹{cityTotal}</span>
+                    <div key={idx} className="animate-scale-in" style={{ animationDelay: `${idx * 0.1}s` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'flex-end' }}>
+                        <div>
+                          <span style={{ fontWeight: '700', fontSize: '1rem' }}>{item.stop.city_name}</span>
+                          <span style={{ fontSize: '0.75rem', opacity: 0.5, marginLeft: '8px' }}>({item.activities.length} acts)</span>
+                        </div>
+                        <span style={{ fontWeight: '800', color: 'var(--accent-light)' }}>₹{cityTotal.toLocaleString()}</span>
                       </div>
-                      <div style={{ height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
-                        <div style={{ width: `${percentage}%`, height: '100%', background: 'var(--accent-gradient)' }}></div>
+                      <div style={{ height: '6px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px', overflow: 'hidden' }}>
+                        <div style={{ 
+                          width: `${percentage}%`, 
+                          height: '100%', 
+                          background: 'var(--accent-gradient)',
+                          opacity: 0.8 + (percentage/500)
+                        }}></div>
                       </div>
                     </div>
                   );
                 })}
+                {budgetData.details.length === 0 && (
+                  <p style={{ opacity: 0.5, fontStyle: 'italic', textAlign: 'center', padding: '20px' }}>No stops added to this trip yet.</p>
+                )}
               </div>
             </div>
           </div>
+
+          <div style={{ 
+            marginTop: '32px', 
+            padding: '24px', 
+            borderRadius: '24px', 
+            background: 'rgba(99, 102, 241, 0.05)', 
+            border: '1px solid rgba(99, 102, 241, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '20px'
+          }}>
+            <div style={{ fontSize: '2rem' }}>💡</div>
+            <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+              <strong>Optimization Tip:</strong> Activities in {budgetData.details.sort((a,b) => {
+                const aCost = a.activities.reduce((sum, act) => sum + parseFloat(act.estimated_cost || 0), 0);
+                const bCost = b.activities.reduce((sum, act) => sum + parseFloat(act.estimated_cost || 0), 0);
+                return bCost - aCost;
+              })[0]?.stop.city_name || "your destinations"} account for the largest portion of your budget. Consider looking for free local alternatives!
+            </p>
+          </div>
+        </div>
+      )}
+
+      {!budgetData && !loading && (
+        <div style={{ textAlign: 'center', padding: '100px 40px', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '40px' }}>
+          <div style={{ fontSize: '4rem', marginBottom: '24px', opacity: 0.3 }}>💹</div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-muted)' }}>Ready to crunch the numbers?</h2>
+          <p style={{ opacity: 0.4, maxWidth: '400px', margin: '16px auto' }}>Select a trip above to see your financial breakdown and budget performance.</p>
         </div>
       )}
     </div>

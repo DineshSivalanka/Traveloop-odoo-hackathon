@@ -20,9 +20,8 @@ const Profile = ({ handleLogout, setTab }) => {
     setLoading(true);
     API.get(`/profile/${userId}`)
       .then(res => {
-        // user: [id, name, email]
         setProfile(res.data);
-        setName(res.data[1]);
+        setName(res.data.name); // Using the object keys from backend response
         setLoading(false);
       })
       .catch(err => {
@@ -51,72 +50,102 @@ const Profile = ({ handleLogout, setTab }) => {
 
   if (loading) {
     return (
-      <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <div className="animate-spin" style={{ fontSize: '2rem' }}>⚙️</div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', flexDirection: 'column', gap: '16px' }}>
+        <div className="animate-spin" style={{ fontSize: '2.5rem' }}>⚙️</div>
+        <p style={{ color: 'var(--text-muted)' }}>Loading your profile...</p>
       </div>
     );
   }
 
   return (
-    <div className="animate-fade-in" style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <header style={{ marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '20px' }}>
+    <div className="animate-fade-in" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+      
+      <header style={{ marginBottom: '48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '8px' }}>
+            ⚙️ Account <span style={{ background: 'var(--accent-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Settings</span>
+          </h1>
+          <p style={{ color: 'var(--text-muted)' }}>Manage your personal information and security preferences.</p>
+        </div>
         <button 
           className="outline" 
           onClick={() => setTab('home')}
-          style={{ padding: '8px 15px' }}
+          style={{ padding: '12px 24px', borderRadius: '14px' }}
         >
-          ← Back
+          ← Back to Dashboard
         </button>
-        <h1 className="header-title" style={{ margin: 0, fontSize: '2.5rem' }}>Profile Settings</h1>
       </header>
 
-      <div className="grid-layout" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
-        {/* Profile Edit */}
-        <div className="glass-card" style={{ padding: '35px' }}>
-          <h2 className="column-header" style={{ border: 0, marginBottom: '25px' }}>Personal Info</h2>
-          <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div className="form-group">
-              <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '8px' }}>Email Address</label>
-              <input 
-                type="email" 
-                value={profile?.[2] || ''} 
-                disabled 
-                style={{ opacity: 0.5, cursor: 'not-allowed', background: 'rgba(255,255,255,0.05)' }}
-              />
-              <p style={{ fontSize: '0.7rem', opacity: 0.4, marginTop: '5px' }}>Email cannot be changed for security reasons.</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px', alignItems: 'start' }}>
+        
+        {/* Profile Card */}
+        <div className="glass-card" style={{ padding: '40px', borderRadius: '32px', background: 'rgba(15, 23, 42, 0.6)' }}>
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <div style={{ 
+              width: '100px', 
+              height: '100px', 
+              borderRadius: '30px', 
+              background: 'var(--accent-gradient)', 
+              margin: '0 auto 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '3rem',
+              color: '#fff',
+              fontWeight: '800',
+              boxShadow: '0 16px 32px rgba(99, 102, 241, 0.3)',
+              border: '4px solid rgba(255,255,255,0.1)'
+            }}>
+              {name?.[0]?.toUpperCase()}
             </div>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: '800', marginBottom: '4px' }}>{name}</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{profile?.email}</p>
+          </div>
 
+          <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div className="form-group">
-              <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '8px' }}>Full Name</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '8px' }}>Full Name</label>
               <input 
                 placeholder="Enter your name" 
                 value={name} 
                 onChange={e => setName(e.target.value)} 
                 required
+                style={{ padding: '14px 18px', borderRadius: '14px', background: 'rgba(255,255,255,0.03)' }}
               />
             </div>
 
             <div className="form-group">
-              <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '8px' }}>Update Password</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '8px' }}>Email Address</label>
+              <input 
+                type="email" 
+                value={profile?.email || ''} 
+                disabled 
+                style={{ opacity: 0.4, cursor: 'not-allowed', background: 'rgba(255,255,255,0.02)', padding: '14px 18px', borderRadius: '14px' }}
+              />
+            </div>
+
+            <div className="form-group">
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-secondary)', marginBottom: '8px' }}>New Password</label>
               <input 
                 type="password" 
                 placeholder="Leave blank to keep current" 
                 value={password} 
                 onChange={e => setPassword(e.target.value)} 
+                style={{ padding: '14px 18px', borderRadius: '14px', background: 'rgba(255,255,255,0.03)' }}
               />
             </div>
 
-            <button type="submit" disabled={saving} style={{ marginTop: '10px' }}>
-              {saving ? 'Saving...' : 'Save Changes'}
+            <button type="submit" disabled={saving} style={{ padding: '16px', fontSize: '1rem', marginTop: '8px' }}>
+              {saving ? 'Updating...' : 'Update Profile'}
             </button>
 
             {message && (
-              <div style={{ 
-                padding: '12px', 
-                background: message.includes('✅') ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
-                border: `1px solid ${message.includes('✅') ? '#10b981' : '#ef4444'}`, 
-                borderRadius: '8px', 
-                color: message.includes('✅') ? '#10b981' : '#ef4444', 
+              <div className="animate-scale-in" style={{ 
+                padding: '14px', 
+                background: message.includes('✅') ? 'rgba(52, 211, 153, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
+                border: `1px solid ${message.includes('✅') ? 'rgba(52, 211, 153, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`, 
+                borderRadius: '12px', 
+                color: message.includes('✅') ? '#34d399' : '#f87171', 
                 fontSize: '0.9rem',
                 textAlign: 'center'
               }}>
@@ -126,32 +155,50 @@ const Profile = ({ handleLogout, setTab }) => {
           </form>
         </div>
 
-        {/* Account Actions */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
-          <div className="glass-card" style={{ padding: '35px' }}>
-            <h2 className="column-header" style={{ border: 0, marginBottom: '15px' }}>Danger Zone</h2>
-            <p style={{ fontSize: '0.9rem', opacity: 0.7, marginBottom: '25px', lineHeight: '1.5' }}>
-              Logging out will end your current session. You'll need your credentials to sign back in.
+        {/* Sidebar Actions */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          
+          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px' }}>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '16px' }}>🚪 Security</h2>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: '1.6' }}>
+              Signing out will end your current session. You'll need to log in again to access your trips.
             </p>
             <button 
               className="outline" 
               onClick={handleLogout} 
-              style={{ width: '100%', borderColor: '#ef4444', color: '#ef4444' }}
+              style={{ width: '100%', padding: '14px', borderColor: 'rgba(239, 68, 68, 0.3)', color: '#f87171' }}
             >
               Sign Out
             </button>
           </div>
 
-          <div className="glass-card" style={{ padding: '35px', background: 'rgba(217, 70, 239, 0.03)' }}>
-            <h2 className="column-header" style={{ border: 0, marginBottom: '15px' }}>Help & Support</h2>
-            <p style={{ fontSize: '0.9rem', opacity: 0.7, lineHeight: '1.5' }}>
-              Having trouble with your account? Reach out to our hackathon support team.
+          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(217, 70, 239, 0.05) 100%)' }}>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '16px' }}>🆘 Support</h2>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '20px' }}>
+              Need help with your account or have a feature request? Our team is ready to help.
             </p>
-            <a href="mailto:support@traveloop.com" style={{ color: 'var(--accent)', textDecoration: 'none', display: 'block', marginTop: '15px', fontWeight: 'bold' }}>
-              Contact Support →
+            <a 
+              href="mailto:support@traveloop.com" 
+              style={{ 
+                color: 'var(--accent-light)', 
+                textDecoration: 'none', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                fontWeight: '700',
+                fontSize: '0.95rem'
+              }}
+            >
+              Contact Support Team <span style={{ fontSize: '1.2rem' }}>→</span>
             </a>
           </div>
+
+          <div style={{ textAlign: 'center', opacity: 0.4, fontSize: '0.8rem' }}>
+            Traveloop v1.0.0-hackathon<br/>
+            Made with ❤️ for the world
+          </div>
         </div>
+
       </div>
     </div>
   );

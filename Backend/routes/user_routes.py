@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from models.user_model import (
     create_user, verify_login,
     get_user_profile, update_user_profile,
-    get_all_users
+    get_all_users, check_email_exists
 )
 
 user_bp = Blueprint("user", __name__)
@@ -65,3 +65,14 @@ def update_profile(user_id):
 def list_users():
     users = get_all_users()
     return jsonify(users), 200
+
+# POST /forgot-password
+@user_bp.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    data  = request.get_json()
+    email = data.get("email", "").strip().lower()
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+    # Always return the same message to prevent email enumeration
+    check_email_exists(email)   # validates email exists (could trigger email later)
+    return jsonify({"message": "If this email is registered, a reset link has been sent."}), 200

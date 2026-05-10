@@ -1,7 +1,18 @@
+import bcrypt
 from db import connect_db
+
+def hash_password(password):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def verify_password(password, hashed):
+    # Fallback for plain text (migration)
+    if not hashed.startswith('$2b$'):
+        return password == hashed
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
 
 # ── Signup ──────────────────────────────────────────────────
 def create_user(name, email, password):
+    hashed = hash_password(password)
     conn = connect_db()
     cur = conn.cursor()
     try:
@@ -11,7 +22,7 @@ def create_user(name, email, password):
             VALUES (%s, %s, %s)
             RETURNING id, name, email
             """,
-            (name, email, password)
+            (name, email, hashed)
         )
         user = cur.fetchone()
         conn.commit()
@@ -28,15 +39,42 @@ def verify_login(email, password):
     conn = connect_db()
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, name, email, is_admin FROM users WHERE email = %s AND password = %s",
-        (email, password)
+        "SELECT id, name, email, is_admin, password FROM users WHERE email = %s",
+        (email,)
     )
     user = cur.fetchone()
     cur.close()
     conn.close()
+    
     if user:
-        return {"user_id": user[0], "name": user[1], "email": user[2], "is_admin": user[3]}
+        user_id, name, user_email, is_admin, hashed_pw = user
+        if verify_password(password, hashed_pw):
+            # If it was plain text, upgrade it to hashed
+            if not hashed_pw.startswith('$2b$'):
+                update_user_password_direct(user_id, password)
+                
+            return {"user_id": user_id, "name": name, "email": user_email, "is_admin": is_admin}
     return None
+
+def update_user_password_direct(user_id, password):
+    hashed = hash_password(password)
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE users SET password = %s WHERE id = %s", (hashed, user_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+# ── Check email exists (for forgot-password) ─────────────────
+def check_email_exists(email):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+    return row is not None
+
 
 # ── Get Profile ──────────────────────────────────────────────
 def get_user_profile(user_id):
@@ -65,9 +103,10 @@ def update_user_profile(user_id, name, password=None, avatar_url=None):
     conn = connect_db()
     cur = conn.cursor()
     if password:
+        hashed = hash_password(password)
         cur.execute(
             "UPDATE users SET name = %s, password = %s, avatar_url = COALESCE(%s, avatar_url) WHERE id = %s",
-            (name, password, avatar_url, user_id)
+            (name, hashed, avatar_url, user_id)
         )
     else:
         cur.execute(
