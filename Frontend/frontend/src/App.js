@@ -11,6 +11,7 @@ import FullItinerary from "./pages/FullItinerary";
 import AuthPage from "./pages/AuthPage";
 import Profile from "./pages/Profile";
 import PublicView from "./pages/PublicView";
+import DiscoverCities from "./pages/DiscoverCities";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
 
   const navItems = [
     { id: 'home', label: 'Dashboard', icon: '🏠' },
+    { id: 'explore', label: 'Explore', icon: '✨' },
     { id: 'budget', label: 'Budget', icon: '💰' },
     { id: 'profile', label: 'Settings', icon: '⚙️' },
   ];
@@ -141,6 +143,7 @@ function App() {
       <div className={`main-wrapper${isSidebarOpen ? ' sidebar-open' : ''}`}>
         <main className="main-content">
           {tab === "home" && <Dashboard setTab={setTab} setSelectedTrip={setSelectedTrip} />}
+          {tab === "explore" && <DiscoverCities setTab={setTab} setSelectedCityId={setSelectedCityId} />}
           {tab === "createTrip" && <CreateTrip setTab={setTab} fetchTrips={fetchTrips} setSelectedTrip={setSelectedTrip} />}
           {tab === "budget" && <Budget trips={trips} />}
           {tab === "addStop" && <AddStop tripId={selectedTrip} setTab={setTab} setSelectedCityId={setSelectedCityId} />}

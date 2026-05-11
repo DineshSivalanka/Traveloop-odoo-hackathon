@@ -20,11 +20,11 @@ def get_dashboard_data(user_id):
 
     # Popular cities
     cur.execute(
-        "SELECT id, name, country, region, cost_index, popularity, description FROM cities ORDER BY popularity DESC LIMIT 6"
+        "SELECT id, name, country, region, cost_index, popularity, description, image_url FROM cities ORDER BY popularity DESC LIMIT 6"
     )
     popular_cities = [
         {"id": r[0], "name": r[1], "country": r[2], "region": r[3],
-         "cost_index": float(r[4] or 0), "popularity": r[5], "description": r[6]}
+         "cost_index": float(r[4] or 0), "popularity": r[5], "description": r[6], "image_url": r[7]}
         for r in cur.fetchall()
     ]
 

@@ -5,7 +5,7 @@ def search_cities(query):
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT id, name, country, region, cost_index, popularity, description
+        SELECT id, name, country, region, cost_index, popularity, description, image_url
         FROM cities
         WHERE name ILIKE %s OR country ILIKE %s OR region ILIKE %s
         ORDER BY popularity DESC
@@ -23,17 +23,17 @@ def get_all_cities(region=None, country=None):
     cur = conn.cursor()
     if region:
         cur.execute(
-            "SELECT id, name, country, region, cost_index, popularity, description FROM cities WHERE region ILIKE %s ORDER BY popularity DESC",
+            "SELECT id, name, country, region, cost_index, popularity, description, image_url FROM cities WHERE region ILIKE %s ORDER BY popularity DESC",
             (f"%{region}%",)
         )
     elif country:
         cur.execute(
-            "SELECT id, name, country, region, cost_index, popularity, description FROM cities WHERE country ILIKE %s ORDER BY popularity DESC",
+            "SELECT id, name, country, region, cost_index, popularity, description, image_url FROM cities WHERE country ILIKE %s ORDER BY popularity DESC",
             (f"%{country}%",)
         )
     else:
         cur.execute(
-            "SELECT id, name, country, region, cost_index, popularity, description FROM cities ORDER BY popularity DESC LIMIT 50"
+            "SELECT id, name, country, region, cost_index, popularity, description, image_url FROM cities ORDER BY popularity DESC LIMIT 50"
         )
     rows = cur.fetchall()
     cur.close()
@@ -51,18 +51,14 @@ def get_city_by_id(city_id):
     cur.close()
     conn.close()
     if row:
-        return {
-            "id": row[0], "name": row[1], "country": row[2],
-            "region": row[3], "cost_index": float(row[4] or 0),
-            "popularity": row[5], "description": row[6], "image_url": row[7]
-        }
+        return _city_row(row)
     return None
 
 def get_popular_cities(limit=6):
     conn = connect_db()
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, name, country, region, cost_index, popularity, description FROM cities ORDER BY popularity DESC LIMIT %s",
+        "SELECT id, name, country, region, cost_index, popularity, description, image_url FROM cities ORDER BY popularity DESC LIMIT %s",
         (limit,)
     )
     rows = cur.fetchall()
@@ -74,5 +70,6 @@ def _city_row(r):
     return {
         "id": r[0], "name": r[1], "country": r[2],
         "region": r[3], "cost_index": float(r[4] or 0),
-        "popularity": r[5], "description": r[6]
+        "popularity": r[5], "description": r[6],
+        "image_url": r[7] if len(r) > 7 else None
     }

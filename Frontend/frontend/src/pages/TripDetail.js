@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../api';
+import TripNotes from '../components/TripNotes';
 
 const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
   const [trip, setTrip] = useState(null);
@@ -132,54 +133,17 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
                 </span>
                 <span style={{ height: '20px', width: '1px', background: 'rgba(255,255,255,0.2)' }}></span>
                 <span style={{ fontSize: '1.05rem', color: '#fff', fontWeight: '500', opacity: 0.9 }}>
-                  🌍 {stops.length} Destinatios
+                  🌍 {stops.length} Destinations
                 </span>
               </div>
             </div>
             
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-              {trip.is_public && (
-                <div style={{ 
-                  background: 'rgba(52, 211, 153, 0.1)', 
-                  border: '1px solid rgba(52, 211, 153, 0.3)', 
-                  padding: '8px 16px', 
-                  borderRadius: '12px', 
-                  color: '#34d399', 
-                  fontSize: '0.8rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  <span style={{ fontSize: '1rem' }}>🔗</span> Public Link Active
-                </div>
-              )}
-              
-              <button 
-                className={trip.is_public ? "outline" : ""}
-                onClick={async () => {
-                  if (trip.is_public) {
-                    if (window.confirm("Make this trip private? The share link will stop working.")) {
-                      await API.delete(`/trips/${tripId}/share`);
-                      loadTripData();
-                    }
-                  } else {
-                    const res = await API.post(`/trips/${tripId}/share`);
-                    const url = `${window.location.origin}/#share=${res.data.share_token}`;
-                    navigator.clipboard.writeText(url);
-                    alert("Trip is now public! Share link copied to clipboard. 🔗");
-                    loadTripData();
-                  }
-                }}
-                style={{ padding: '14px 24px', borderRadius: '16px', fontSize: '0.9rem', fontWeight: '700' }}
-              >
-                {trip.is_public ? '🔒 Make Private' : '🔗 Share Trip'}
-              </button>
-
               <button 
                 onClick={() => setTab('fullItinerary')}
                 style={{ padding: '14px 28px', fontSize: '1rem', fontWeight: '700', borderRadius: '16px', boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)' }}
               >
-                🗺️ Itinerary
+                🗺️ Full Itinerary
               </button>
 
               <button 
@@ -320,8 +284,6 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
                         fontSize: '1rem',
                         transition: 'all 0.2s ease'
                       }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
                     >
                       🗑️
                     </button>
@@ -329,23 +291,10 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
                 </div>
               </div>
             ))}
-
-            {stops.length === 0 && (
-              <div className="glass-card" style={{ padding: '80px 40px', textAlign: 'center', borderRadius: '32px', border: '1px dashed rgba(255,255,255,0.1)' }}>
-                <div style={{ fontSize: '3.5rem', marginBottom: '24px' }}>🗺️</div>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: '700', marginBottom: '12px' }}>Empty Itinerary</h3>
-                <p style={{ color: 'var(--text-muted)', maxWidth: '300px', margin: '0 auto 24px' }}>
-                  Your journey hasn't started yet. Add your first destination to begin planning.
-                </p>
-                <button className="outline" onClick={() => setTab('addStop')} style={{ padding: '14px 32px', borderRadius: '16px' }}>
-                  + Add Your First Stop
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* ── Trip Sidebar Stats ── */}
+        {/* ── Trip Sidebar ── */}
         <div style={{ position: 'sticky', top: '40px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
           <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'rgba(15, 23, 42, 0.6)' }}>
@@ -373,26 +322,13 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '28px' }}>
                 <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Description</h4>
                 <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.7' }}>
-                  {trip.description || "No description provided for this adventure. Use this space to note your trip's theme or primary goals."}
+                  {trip.description || "No description provided for this adventure."}
                 </p>
               </div>
             </div>
           </div>
 
-          <div style={{ 
-            padding: '32px', 
-            borderRadius: '32px', 
-            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(217, 70, 239, 0.1) 100%)', 
-            border: '1px solid rgba(99, 102, 241, 0.2)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{ position: 'absolute', top: '-20px', right: '-20px', fontSize: '5rem', opacity: 0.1 }}>💡</div>
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.1rem', fontWeight: '800' }}>Smart Tip</h3>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6' }}>
-              Try to keep 1-2 days between stops for long-distance travel to avoid fatigue. You can re-order your stops in the Full Itinerary view!
-            </p>
-          </div>
+          <TripNotes tripId={tripId} />
         </div>
 
       </div>

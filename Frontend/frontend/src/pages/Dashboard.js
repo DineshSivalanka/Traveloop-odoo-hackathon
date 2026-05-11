@@ -196,9 +196,14 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
                 onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(99,102,241,0.4)'; e.currentTarget.style.transform='translateY(-3px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor=''; e.currentTarget.style.transform=''; }}
               >
-                <div style={{ width:'48px', height:'48px', borderRadius:'12px', background:'rgba(99,102,241,0.1)', border:'1px solid rgba(99,102,241,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.4rem', flexShrink:0 }}>
-                  {DEST_EMOJIS[city.country] || '🌍'}
-                </div>
+                <div style={{ 
+                  width:'56px', 
+                  height:'56px', 
+                  borderRadius:'12px', 
+                  background: `url('${city.image_url || `https://source.unsplash.com/100x100/?${city.name},city`}') center/cover`, 
+                  border:'1px solid rgba(255,255,255,0.1)', 
+                  flexShrink:0 
+                }} />
                 <div style={{ minWidth:0 }}>
                   <p style={{ fontWeight:'600', fontSize:'0.95rem', marginBottom:'2px', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{city.name}</p>
                   <p style={{ fontSize:'0.75rem', color:'var(--text-muted)' }}>{city.country}</p>
