@@ -91,17 +91,17 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
       <div style={{ 
         height: 'clamp(300px, 40vh, 450px)', 
         borderRadius: '32px', 
-        background: trip.cover_image_url ? `url(${trip.cover_image_url}) center/cover` : 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)',
+        background: trip.cover_image_url ? `url(${trip.cover_image_url}) center/cover` : 'var(--accent-gradient)',
         marginBottom: '48px',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: '0 24px 64px rgba(0,0,0,0.4)',
-        border: '1px solid rgba(255,255,255,0.08)'
+        boxShadow: 'var(--shadow-card-hover)',
+        border: '1px solid var(--card-border)'
       }}>
-        <div style={{ 
+        <div className="hero-banner" style={{ 
           position: 'absolute', 
           inset: 0, 
-          background: 'linear-gradient(to top, rgba(10, 14, 30, 0.95) 0%, rgba(10, 14, 30, 0.4) 50%, rgba(10, 14, 30, 0.2) 100%)',
+          background: 'linear-gradient(to top, var(--overlay-scrim) 0%, rgba(10, 6, 20, 0.5) 50%, transparent 100%)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-end',
@@ -109,22 +109,20 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '32px' }}>
             <div style={{ flex: '1 1 400px' }}>
-              <button 
-                className="outline" 
+              <button
+                type="button"
+                className="outline"
                 onClick={() => setTab('home')}
                 style={{ 
                   padding: '10px 20px', 
                   marginBottom: '24px', 
-                  background: 'rgba(255,255,255,0.08)', 
-                  backdropFilter: 'blur(12px)', 
                   fontSize: '0.85rem',
                   borderRadius: '12px',
-                  border: '1px solid rgba(255,255,255,0.1)'
                 }}
               >
                 ← Back to Trips
               </button>
-              <h1 style={{ fontSize: 'clamp(2.4rem, 6vw, 4.2rem)', margin: '0 0 12px 0', fontWeight: '900', lineHeight: 1, letterSpacing: '-2px' }}>
+              <h1 style={{ fontSize: 'clamp(2.4rem, 6vw, 4.2rem)', margin: '0 0 12px 0', fontWeight: '900', lineHeight: 1, letterSpacing: '-2px', color: '#fff', textShadow: '0 2px 20px rgba(0,0,0,0.35)' }}>
                 {trip.title}
               </h1>
               <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
@@ -141,7 +139,7 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
               <button 
                 onClick={() => setTab('fullItinerary')}
-                style={{ padding: '14px 28px', fontSize: '1rem', fontWeight: '700', borderRadius: '16px', boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)' }}
+                style={{ padding: '14px 28px', fontSize: '1rem', fontWeight: '700', borderRadius: '16px', boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)' }}
               >
                 🗺️ Full Itinerary
               </button>
@@ -150,9 +148,9 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
                 className="outline" 
                 onClick={handleDeleteTrip}
                 style={{ 
-                  borderColor: 'rgba(239, 68, 68, 0.3)', 
-                  color: '#f87171', 
-                  background: 'rgba(239, 68, 68, 0.1)', 
+                  borderColor: 'var(--card-border)', 
+                  color: 'var(--text-main)', 
+                  background: 'rgba(248, 248, 249, 0.08)', 
                   padding: '14px 24px', 
                   fontSize: '0.9rem',
                   borderRadius: '16px'
@@ -178,31 +176,32 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
 
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '32px' }}>
             {/* The line */}
-            <div style={{ 
-              position: 'absolute', 
-              left: '22px', 
-              top: '20px', 
-              bottom: '20px', 
-              width: '2px', 
-              background: 'linear-gradient(to bottom, var(--accent) 0%, rgba(99, 102, 241, 0.1) 100%)',
-              zIndex: 0
-            }}></div>
+            <div
+              className="animate-scale-in"
+              style={{
+                position: 'absolute',
+                left: '22px',
+                top: '20px',
+                bottom: '20px',
+                width: '2px',
+                background: 'linear-gradient(to bottom, var(--accent-light) 0%, var(--accent-subtle) 100%)'
+              }}
+            />
 
             {stops.map((stop, index) => (
-              <div 
-                key={stop.id} 
-                className="animate-scale-in" 
-                style={{ 
-                  display: 'flex', 
-                  gap: '24px', 
-                  position: 'relative', 
+              <div
+                key={stop.id}
+                style={{
+                  display: 'flex',
+                  gap: '24px',
+                  position: 'relative',
                   zIndex: 1,
                   transition: 'transform 0.3s ease'
                 }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateX(8px)'}
                 onMouseLeave={e => e.currentTarget.style.transform = ''}
               >
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                   <div style={{ 
                     width: '46px', 
                     height: '46px', 
@@ -211,29 +210,31 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center', 
-                    color: '#fff',
+                    color: 'var(--btn-text)',
                     fontWeight: '800',
                     fontSize: '1.1rem',
                     flexShrink: 0,
-                    boxShadow: '0 8px 20px rgba(99, 102, 241, 0.4)',
-                    border: '2px solid rgba(255,255,255,0.2)'
+                    boxShadow: '0 8px 24px var(--btn-glow)',
+                    border: '2px solid rgba(255,255,255,0.35)'
                   }}>
                     {index + 1}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <button 
+                    <button
+                      type="button"
                       onClick={() => handleMoveStop(index, 'up')}
                       disabled={index === 0}
-                      className="outline"
-                      style={{ padding: '2px 8px', fontSize: '0.6rem', border: 'none', background: 'rgba(255,255,255,0.05)', opacity: index === 0 ? 0.2 : 1 }}
+                      className="outline icon-btn"
+                      style={{ padding: '2px 8px', fontSize: '0.6rem', minWidth: '28px', opacity: index === 0 ? 0.2 : 1 }}
                     >
                       ▲
                     </button>
-                    <button 
+                    <button
+                      type="button"
                       onClick={() => handleMoveStop(index, 'down')}
                       disabled={index === stops.length - 1}
-                      className="outline"
-                      style={{ padding: '2px 8px', fontSize: '0.6rem', border: 'none', background: 'rgba(255,255,255,0.05)', opacity: index === stops.length - 1 ? 0.2 : 1 }}
+                      className="outline icon-btn"
+                      style={{ padding: '2px 8px', fontSize: '0.6rem', minWidth: '28px', opacity: index === stops.length - 1 ? 0.2 : 1 }}
                     >
                       ▼
                     </button>
@@ -247,8 +248,8 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
                   display: 'flex', 
                   justifyContent: 'space-between', 
                   alignItems: 'center',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.06)'
+                  background: 'var(--card-bg-light)',
+                  border: '1px solid var(--card-border)'
                 }}>
                   <div>
                     <h3 style={{ margin: '0 0 6px 0', fontSize: '1.4rem', fontWeight: '800' }}>{stop.city_name}</h3>
@@ -256,14 +257,15 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
                       <p style={{ margin: 0, opacity: 0.6, fontSize: '0.9rem', fontWeight: '500' }}>
                         📅 {formatDate(stop.arrival_date)} — {formatDate(stop.departure_date)}
                       </p>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--accent-light)', background: 'rgba(99,102,241,0.1)', padding: '2px 8px', borderRadius: '6px' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--accent)', background: 'var(--accent-subtle)', padding: '2px 8px', borderRadius: '6px' }}>
                         Stop {index + 1}
                       </span>
                     </div>
                   </div>
                   
                   <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <button 
+                    <button
+                      type="button"
                       onClick={() => {
                         setSelectedStopId(stop.id);
                         setTab('stopDetail');
@@ -272,12 +274,11 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
                     >
                       Manage →
                     </button>
-                    <button 
+                    <button
+                      type="button"
+                      className="btn-danger"
                       onClick={() => handleDeleteStop(stop.id)}
                       style={{ 
-                        background: 'rgba(239, 68, 68, 0.1)', 
-                        border: '1px solid rgba(239, 68, 68, 0.2)', 
-                        color: '#f87171', 
                         cursor: 'pointer', 
                         padding: '10px',
                         borderRadius: '12px',
@@ -297,14 +298,14 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
         {/* ── Trip Sidebar ── */}
         <div style={{ position: 'sticky', top: '40px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
-          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'rgba(15, 23, 42, 0.6)' }}>
+          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'var(--card-bg-light)' }}>
             <h2 style={{ fontSize: '1.2rem', fontWeight: '800', marginBottom: '32px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
               Adventure Overview
             </h2>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
               <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>📍</div>
+                <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'var(--accent-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>📍</div>
                 <div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Destinations</div>
                   <div style={{ fontSize: '1.2rem', fontWeight: '800' }}>{stops.length} Cities</div>
@@ -312,14 +313,14 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
               </div>
 
               <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(52, 211, 153, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>💰</div>
+                <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'var(--accent-subtle)', border: '1px solid var(--card-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>💰</div>
                 <div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '2px' }}>Estimated Budget</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: '800', color: '#34d399' }}>₹{trip.budget?.toLocaleString() || 0}</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--secondary)' }}>₹{trip.budget?.toLocaleString() || 0}</div>
                 </div>
               </div>
 
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '28px' }}>
+              <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '28px' }}>
                 <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-secondary)' }}>Description</h4>
                 <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.7' }}>
                   {trip.description || "No description provided for this adventure."}

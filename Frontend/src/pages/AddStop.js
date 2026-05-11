@@ -162,8 +162,8 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
                   cursor: 'pointer',
                   padding: '20px',
                   borderRadius: '20px',
-                  border: selectedCity?.id === city.id ? '2px solid var(--accent)' : '1px solid rgba(255,255,255,0.06)',
-                  background: selectedCity?.id === city.id ? 'rgba(99, 102, 241, 0.1)' : 'rgba(255,255,255,0.02)',
+                  border: selectedCity?.id === city.id ? '2px solid var(--accent)' : '1px solid var(--card-border)',
+                  background: selectedCity?.id === city.id ? 'var(--accent-subtle)' : 'var(--glass)',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -174,7 +174,7 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
                     borderRadius: '12px', 
                     background: `url('${city.image_url || `https://source.unsplash.com/200x200/?${city.name},city`}') center/cover`,
                     flexShrink: 0,
-                    border: '1px solid rgba(255,255,255,0.1)'
+                    border: '1px solid var(--card-border)'
                   }} />
                   <div style={{ flex: 1 }}>
                     <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800' }}>{city.name}</h3>
@@ -191,7 +191,7 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
                 </div>
                 
                 {selectedCity?.id === city.id && (
-                  <div className="animate-fade-in" style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div className="animate-fade-in" style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--card-border)' }}>
                     <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>
                       {city.description}
                     </p>
@@ -211,9 +211,9 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
               <div style={{ 
                 height: selectedCity ? '150px' : 'auto',
                 padding: selectedCity ? '0' : '20px', 
-                background: selectedCity ? `linear-gradient(to bottom, transparent, rgba(15,23,42,0.9)), url('${selectedCity.image_url || `https://source.unsplash.com/600x300/?${selectedCity.name},city`}') center/cover` : 'rgba(255,255,255,0.03)', 
+                background: selectedCity ? `linear-gradient(to bottom, transparent, var(--overlay-scrim)), url('${selectedCity.image_url || `https://source.unsplash.com/600x300/?${selectedCity.name},city`}') center/cover` : 'var(--glass)', 
                 borderRadius: '16px',
-                border: '1px solid rgba(255,255,255,0.1)',
+                border: '1px solid var(--card-border)',
                 textAlign: selectedCity ? 'left' : 'center',
                 display: 'flex',
                 flexDirection: 'column',

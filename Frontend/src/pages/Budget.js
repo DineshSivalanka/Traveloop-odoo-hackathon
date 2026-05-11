@@ -44,7 +44,7 @@ const Budget = ({ trips }) => {
       </header>
 
       {/* ── Trip Selector ── */}
-      <div className="glass-card" style={{ padding: '32px', borderRadius: '28px', marginBottom: '40px', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="glass-card" style={{ padding: '32px', borderRadius: '28px', marginBottom: '40px', border: '1px solid var(--card-border)' }}>
         <h3 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)' }}>
           Select Adventure to Analyze
         </h3>
@@ -61,7 +61,7 @@ const Budget = ({ trips }) => {
                   padding: '12px 24px', 
                   borderRadius: '14px',
                   background: selectedTripId === trip.id ? 'var(--accent-gradient)' : 'transparent',
-                  border: selectedTripId === trip.id ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                  border: selectedTripId === trip.id ? 'none' : '1px solid var(--card-border)',
                   transition: 'all 0.2s ease',
                   fontSize: '0.9rem'
                 }}
@@ -89,24 +89,20 @@ const Budget = ({ trips }) => {
               padding: '40px', 
               borderRadius: '32px', 
               textAlign: 'center',
-              background: 'rgba(15, 23, 42, 0.6)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'var(--card-bg)',
+              border: '1px solid var(--card-border)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               position: 'relative',
               overflow: 'hidden'
             }}>
-              <div style={{ position: 'absolute', top: '-10px', left: '-10px', width: '100px', height: '100px', background: isOverBudget ? 'rgba(239, 68, 68, 0.05)' : 'rgba(52, 211, 153, 0.05)', filter: 'blur(40px)', borderRadius: '50%' }}></div>
-              
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Total Estimated Cost
-              </p>
+              <div style={{ position: 'absolute', top: '-10px', left: '-10px', width: '100px', height: '100px', background: isOverBudget ? 'rgba(239, 68, 68, 0.08)' : 'rgba(245, 193, 43, 0.15)', filter: 'blur(40px)', borderRadius: '50%' }}></div>
               <h1 style={{ 
                 fontSize: '4.2rem', 
                 fontWeight: '900', 
                 margin: '0 0 16px 0', 
-                color: isOverBudget ? '#f87171' : '#34d399',
+                color: isOverBudget ? 'var(--error)' : 'var(--secondary)',
                 letterSpacing: '-2px',
                 lineHeight: 1
               }}>
@@ -114,19 +110,19 @@ const Budget = ({ trips }) => {
               </h1>
               
               {tripBudget > 0 && (
-                <div style={{ padding: '24px', background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ padding: '24px', background: 'var(--glass)', borderRadius: '20px', border: '1px solid var(--card-border)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.9rem' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Budget Limit: ₹{tripBudget.toLocaleString()}</span>
-                    <span style={{ fontWeight: '700', color: isOverBudget ? '#f87171' : 'var(--accent-light)' }}>
+                    <span style={{ fontWeight: '700', color: isOverBudget ? 'var(--error)' : 'var(--accent)' }}>
                       {Math.round((total/tripBudget)*100)}%
                     </span>
                   </div>
-                  <div style={{ height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
+                  <div style={{ height: '10px', background: 'var(--accent-subtle)', borderRadius: '10px', overflow: 'hidden' }}>
                     <div style={{ 
                       width: `${budgetPercentage}%`, 
                       height: '100%', 
-                      background: isOverBudget ? 'linear-gradient(90deg, #f87171, #ef4444)' : 'var(--accent-gradient)',
-                      boxShadow: isOverBudget ? '0 0 15px rgba(239, 68, 68, 0.4)' : '0 0 15px rgba(99, 102, 241, 0.3)'
+                      background: isOverBudget ? 'linear-gradient(90deg, #ef4444, #f59e0b)' : 'var(--accent-gradient)',
+                      boxShadow: '0 0 15px rgba(0, 0, 0, 0.3)'
                     }}></div>
                   </div>
                   {isOverBudget && (
@@ -154,7 +150,7 @@ const Budget = ({ trips }) => {
                         </div>
                         <span style={{ fontWeight: '800', color: 'var(--accent-light)' }}>₹{cityTotal.toLocaleString()}</span>
                       </div>
-                      <div style={{ height: '6px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ height: '6px', background: 'rgba(0,0,0,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
                         <div style={{ 
                           width: `${percentage}%`, 
                           height: '100%', 
@@ -176,8 +172,8 @@ const Budget = ({ trips }) => {
             marginTop: '32px', 
             padding: '24px', 
             borderRadius: '24px', 
-            background: 'rgba(99, 102, 241, 0.05)', 
-            border: '1px solid rgba(99, 102, 241, 0.1)',
+            background: 'rgba(248, 248, 249, 0.04)', 
+            border: '1px solid var(--card-border)',
             display: 'flex',
             alignItems: 'center',
             gap: '20px'
@@ -195,7 +191,7 @@ const Budget = ({ trips }) => {
       )}
 
       {!budgetData && !loading && (
-        <div style={{ textAlign: 'center', padding: '100px 40px', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '40px' }}>
+        <div style={{ textAlign: 'center', padding: '100px 40px', border: '1px dashed var(--card-border)', borderRadius: '40px' }}>
           <div style={{ fontSize: '4rem', marginBottom: '24px', opacity: 0.3 }}>💹</div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-muted)' }}>Ready to crunch the numbers?</h2>
           <p style={{ opacity: 0.4, maxWidth: '400px', margin: '16px auto' }}>Select a trip above to see your financial breakdown and budget performance.</p>

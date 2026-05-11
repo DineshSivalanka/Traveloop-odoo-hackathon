@@ -142,20 +142,21 @@ const FullItinerary = ({ tripId, setTab }) => {
       </header>
 
       {/* ── Trip Hero ── */}
-      <div style={{ 
+      <div className="hero-banner" style={{ 
         padding: '48px', 
         marginBottom: '48px', 
         borderRadius: '32px',
-        background: 'linear-gradient(135deg, var(--accent) 0%, #4338ca 100%)',
-        boxShadow: '0 24px 64px rgba(99, 102, 241, 0.3)',
+        background: 'var(--accent-gradient-hero)',
+        boxShadow: 'var(--shadow-card-hover)',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        border: '1px solid var(--accent-subtle-border)',
       }}>
         <div style={{ position: 'absolute', top: '-50px', right: '-50px', fontSize: '15rem', opacity: 0.1 }}>🗺️</div>
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h2 style={{ fontSize: '3.5rem', fontWeight: '900', margin: '0 0 12px 0', lineHeight: 1 }}>{data.trip.title}</h2>
-          <p style={{ fontSize: '1.1rem', opacity: 0.9, maxWidth: '600px', marginBottom: '24px' }}>{data.trip.description}</p>
-          <div style={{ display: 'inline-flex', alignItems: 'center', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', padding: '12px 24px', borderRadius: '20px' }}>
+          <h2 style={{ fontSize: '3.5rem', fontWeight: '900', margin: '0 0 12px 0', lineHeight: 1, color: '#fff', textShadow: '0 2px 24px rgba(0,0,0,0.25)' }}>{data.trip.title}</h2>
+          <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.92)', maxWidth: '600px', marginBottom: '24px', lineHeight: 1.65 }}>{data.trip.description}</p>
+          <div style={{ display: 'inline-flex', alignItems: 'center', background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(12px)', padding: '12px 24px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.35)', color: '#fff' }}>
             <span style={{ fontSize: '0.9rem', fontWeight: '600', marginRight: '12px' }}>Projected Cost:</span>
             <span style={{ fontSize: '1.5rem', fontWeight: '900' }}>₹{totalCost.toLocaleString()}</span>
           </div>
@@ -192,11 +193,11 @@ const FullItinerary = ({ tripId, setTab }) => {
                   flex: 1, 
                   padding: '32px', 
                   borderRadius: '28px',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.06)'
+                  background: 'var(--card-bg-light)',
+                  border: '1px solid var(--card-border)'
                 }}>
                   <div style={{ marginBottom: '20px' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '800', color: '#fff' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>
                       {formatDateLabel(day.date)}
                     </h3>
                   </div>
@@ -207,12 +208,12 @@ const FullItinerary = ({ tripId, setTab }) => {
                       {day.stops.map(s => (
                         <span key={s.stop.id} style={{ 
                           padding: '6px 12px', 
-                          background: 'rgba(99, 102, 241, 0.15)', 
-                          color: 'var(--accent-light)', 
+                          background: 'var(--accent-subtle)', 
+                          color: 'var(--text-main)', 
                           borderRadius: '10px', 
                           fontSize: '0.85rem', 
                           fontWeight: '700',
-                          border: '1px solid rgba(99, 102, 241, 0.2)'
+                          border: '1px solid var(--card-border)'
                         }}>
                           📍 {s.stop.city_name}
                         </span>
@@ -223,7 +224,7 @@ const FullItinerary = ({ tripId, setTab }) => {
                   {/* Activities */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {day.activities.length === 0 ? (
-                      <div style={{ padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.08)', textAlign: 'center' }}>
+                      <div style={{ padding: '20px', background: 'var(--glass)', borderRadius: '16px', border: '1px dashed var(--card-border)', textAlign: 'center' }}>
                         <p style={{ margin: 0, opacity: 0.3, fontSize: '0.9rem', fontStyle: 'italic' }}>No specific activities scheduled.</p>
                       </div>
                     ) : (
@@ -233,9 +234,9 @@ const FullItinerary = ({ tripId, setTab }) => {
                           justifyContent: 'space-between', 
                           alignItems: 'center', 
                           padding: '16px', 
-                          background: 'rgba(255,255,255,0.04)', 
+                          background: 'var(--card-bg-light)', 
                           borderRadius: '16px',
-                          border: '1px solid rgba(255,255,255,0.05)'
+                          border: '1px solid var(--card-border)'
                         }}>
                           <div>
                             <div style={{ fontWeight: '700', fontSize: '0.95rem' }}>✨ {act.activity_name}</div>
@@ -256,7 +257,7 @@ const FullItinerary = ({ tripId, setTab }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
           
           {/* Checklist */}
-          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'rgba(15, 23, 42, 0.6)' }}>
+          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'var(--card-bg)' }}>
             <h3 style={{ margin: '0 0 20px 0', fontSize: '1.2rem', fontWeight: '800' }}>🎒 Checklist</h3>
             <div style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
               <input 
@@ -264,7 +265,7 @@ const FullItinerary = ({ tripId, setTab }) => {
                 value={newItem} 
                 onChange={e => setNewItem(e.target.value)}
                 onKeyPress={e => e.key === 'Enter' && addChecklistItem()}
-                style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)' }}
+                style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'var(--card-bg-light)' }}
               />
               <button onClick={addChecklistItem} style={{ padding: '12px 20px', borderRadius: '12px' }}>+</button>
             </div>
@@ -277,7 +278,7 @@ const FullItinerary = ({ tripId, setTab }) => {
                     fontSize: '0.95rem', 
                     padding: '12px 16px', 
                     borderRadius: '12px', 
-                    background: item.is_packed ? 'rgba(52, 211, 153, 0.1)' : 'rgba(255,255,255,0.02)',
+                    background: item.is_packed ? 'rgba(5, 150, 105, 0.12)' : 'var(--glass)',
                     display: 'flex', 
                     alignItems: 'center', 
                     gap: '12px',
@@ -295,20 +296,20 @@ const FullItinerary = ({ tripId, setTab }) => {
           </div>
 
           {/* Notes */}
-          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'rgba(15, 23, 42, 0.6)' }}>
+          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'var(--card-bg)' }}>
             <h3 style={{ margin: '0 0 20px 0', fontSize: '1.2rem', fontWeight: '800' }}>📝 Quick Notes</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
               <textarea 
                 placeholder="Important info..." 
                 value={newNote} 
                 onChange={e => setNewNote(e.target.value)}
-                style={{ minHeight: '100px', padding: '16px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', color: '#fff' }}
+                style={{ minHeight: '100px', padding: '16px', background: 'var(--card-bg-light)', border: '1px solid var(--card-border)', borderRadius: '16px', color: 'var(--text-main)' }}
               />
               <button onClick={addNote} style={{ borderRadius: '12px' }}>Save Note</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {notes.map((note) => (
-                <div key={note.id} style={{ padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '0.9rem' }}>
+                <div key={note.id} style={{ padding: '16px', background: 'var(--glass)', borderRadius: '16px', border: '1px solid var(--card-border)', fontSize: '0.9rem' }}>
                   {note.note_text}
                 </div>
               ))}

@@ -4,6 +4,9 @@ import './index.css';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 
+const t = localStorage.getItem('theme') || 'light';
+document.body.className = `${t}-theme`;
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

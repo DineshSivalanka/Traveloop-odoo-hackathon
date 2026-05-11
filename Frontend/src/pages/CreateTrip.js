@@ -57,7 +57,7 @@ const CreateTrip = ({ setTab, fetchTrips, setSelectedTrip }) => {
         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Enter your journey details to start planning.</p>
       </header>
 
-      <div className="glass-card" style={{ padding: 'clamp(20px, 5vw, 48px)', borderRadius: '24px', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
+      <div className="glass-card" style={{ padding: 'clamp(20px, 5vw, 48px)', borderRadius: '24px', border: '1px solid var(--card-border)' }}>
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
           <div className="form-group">
@@ -124,9 +124,9 @@ const CreateTrip = ({ setTab, fetchTrips, setSelectedTrip }) => {
             <div className="animate-scale-in" style={{ 
               borderRadius: '20px', 
               overflow: 'hidden', 
-              border: '2px solid rgba(99, 102, 241, 0.3)', 
+              border: '2px solid var(--accent-subtle-border)', 
               height: '220px',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.3)'
+              boxShadow: '0 16px 40px var(--accent-glow)'
             }}>
               <img 
                 src={coverImage} 
@@ -145,9 +145,9 @@ const CreateTrip = ({ setTab, fetchTrips, setSelectedTrip }) => {
               onChange={e => setDescription(e.target.value)} 
               style={{ 
                 minHeight: '140px', 
-                background: 'rgba(0,0,0,0.25)', 
-                color: '#fff', 
-                border: '1px solid rgba(255,255,255,0.1)', 
+                background: 'var(--glass)', 
+                color: 'var(--text-main)', 
+                border: '1px solid var(--card-border)', 
                 borderRadius: '16px', 
                 padding: '18px',
                 lineHeight: '1.6',

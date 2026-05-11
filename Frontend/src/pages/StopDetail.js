@@ -133,10 +133,10 @@ const StopDetail = ({ stopId, tripId, setTab }) => {
           <select 
             value={selectedDate} 
             onChange={e => setSelectedDate(e.target.value)}
-            style={{ padding: '8px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }}
+            style={{ padding: '8px 12px', borderRadius: '10px', background: 'var(--card-bg-light)', color: 'var(--text-main)', border: '1px solid var(--card-border)' }}
           >
             {getStopDates().map(d => (
-              <option key={d} value={d} style={{ background: '#1e1b4b' }}>
+              <option key={d} value={d} style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>
                 {new Date(d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
               </option>
             ))}
@@ -222,7 +222,7 @@ const StopDetail = ({ stopId, tripId, setTab }) => {
 
         {/* ── Right Summary Sidebar ── */}
         <div style={{ flex: 1, position: 'sticky', top: '24px' }}>
-          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'rgba(15, 23, 42, 0.7)' }}>
+          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', background: 'var(--card-bg)' }}>
             <h2 style={{ fontSize: '1.2rem', fontWeight: '800', marginBottom: '32px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
               Stop Summary
             </h2>
@@ -242,7 +242,7 @@ const StopDetail = ({ stopId, tripId, setTab }) => {
                   </div>
                   <button 
                     onClick={() => handleRemoveActivity(activity.id)}
-                    style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: 'none', width: '32px', height: '32px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{ background: 'rgba(248, 248, 249, 0.1)', color: 'var(--text-main)', border: 'none', width: '32px', height: '32px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     ×
                   </button>
@@ -251,11 +251,11 @@ const StopDetail = ({ stopId, tripId, setTab }) => {
             </div>
 
             <div style={{ 
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(217, 70, 239, 0.1) 100%)', 
+              background: 'rgba(248, 248, 249, 0.04)', 
               padding: '24px', 
               borderRadius: '24px', 
-              border: '1px solid rgba(99, 102, 241, 0.2)',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.2)'
+              border: '1px solid var(--card-border)',
+              boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)'
             }}>
               <p style={{ margin: '0 0 8px 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', fontWeight: '600', textTransform: 'uppercase' }}>Estimated Stop Cost</p>
               <div style={{ fontSize: '2.2rem', fontWeight: '900', color: '#fff', letterSpacing: '-1px' }}>

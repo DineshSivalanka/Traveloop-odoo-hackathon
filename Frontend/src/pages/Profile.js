@@ -109,7 +109,7 @@ const Profile = ({ handleLogout, setTab }) => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '40px', alignItems: 'start' }}>
         
         {/* ── Main Settings Form ── */}
-        <div className="glass-card" style={{ padding: '40px', borderRadius: '32px', background: 'rgba(15, 23, 42, 0.6)' }}>
+        <div className="glass-card" style={{ padding: '40px', borderRadius: '32px' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
             <div style={{ 
               width: '120px', 
@@ -121,10 +121,10 @@ const Profile = ({ handleLogout, setTab }) => {
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: '3.5rem',
-              color: '#fff',
+              color: 'var(--btn-text)',
               fontWeight: '800',
-              boxShadow: '0 24px 48px rgba(99, 102, 241, 0.3)',
-              border: '4px solid rgba(255,255,255,0.1)',
+              boxShadow: '0 20px 48px var(--btn-glow)',
+              border: '4px solid var(--card-border)',
               overflow: 'hidden'
             }}>
               {!avatarUrl && name?.[0]?.toUpperCase()}
@@ -142,7 +142,7 @@ const Profile = ({ handleLogout, setTab }) => {
                   value={name} 
                   onChange={e => setName(e.target.value)} 
                   required
-                  style={{ padding: '14px 18px', borderRadius: '14px', background: 'rgba(255,255,255,0.03)' }}
+                  style={{ padding: '14px 18px', borderRadius: '14px', background: 'var(--card-bg-light)' }}
                 />
               </div>
               <div className="form-group">
@@ -150,13 +150,13 @@ const Profile = ({ handleLogout, setTab }) => {
                 <select 
                   value={language} 
                   onChange={e => setLanguage(e.target.value)}
-                  style={{ width: '100%', padding: '14px 18px', borderRadius: '14px', background: 'rgba(255,255,255,0.03)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }}
+                  style={{ width: '100%', padding: '14px 18px', borderRadius: '14px', background: 'var(--card-bg-light)', color: 'var(--text-main)', border: '1px solid var(--card-border)' }}
                 >
-                  <option value="English" style={{background: '#1e1b4b'}}>English</option>
-                  <option value="Spanish" style={{background: '#1e1b4b'}}>Spanish</option>
-                  <option value="French" style={{background: '#1e1b4b'}}>French</option>
-                  <option value="German" style={{background: '#1e1b4b'}}>German</option>
-                  <option value="Hindi" style={{background: '#1e1b4b'}}>Hindi</option>
+                  <option value="English" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>English</option>
+                  <option value="Spanish" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>Spanish</option>
+                  <option value="French" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>French</option>
+                  <option value="German" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>German</option>
+                  <option value="Hindi" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>Hindi</option>
                 </select>
               </div>
             </div>
@@ -167,7 +167,7 @@ const Profile = ({ handleLogout, setTab }) => {
                 placeholder="https://images.com/my-photo.jpg" 
                 value={avatarUrl} 
                 onChange={e => setAvatarUrl(e.target.value)} 
-                style={{ padding: '14px 18px', borderRadius: '14px', background: 'rgba(255,255,255,0.03)' }}
+                style={{ padding: '14px 18px', borderRadius: '14px', background: 'var(--card-bg-light)' }}
               />
             </div>
 
@@ -177,7 +177,7 @@ const Profile = ({ handleLogout, setTab }) => {
                 type="email" 
                 value={profile?.email || ''} 
                 disabled 
-                style={{ opacity: 0.4, cursor: 'not-allowed', background: 'rgba(255,255,255,0.02)', padding: '14px 18px', borderRadius: '14px' }}
+                style={{ opacity: 0.4, cursor: 'not-allowed', background: 'var(--glass)', padding: '14px 18px', borderRadius: '14px' }}
               />
             </div>
 
@@ -188,21 +188,21 @@ const Profile = ({ handleLogout, setTab }) => {
                 placeholder="Leave blank to keep current" 
                 value={password} 
                 onChange={e => setPassword(e.target.value)} 
-                style={{ padding: '14px 18px', borderRadius: '14px', background: 'rgba(255,255,255,0.03)' }}
+                style={{ padding: '14px 18px', borderRadius: '14px', background: 'var(--card-bg-light)' }}
               />
             </div>
 
-            <button type="submit" disabled={saving} style={{ padding: '18px', fontSize: '1rem', marginTop: '8px', boxShadow: '0 12px 32px rgba(99, 102, 241, 0.3)' }}>
+            <button type="submit" disabled={saving} style={{ padding: '18px', fontSize: '1rem', marginTop: '8px', boxShadow: '0 12px 36px var(--accent-glow)' }}>
               {saving ? 'Saving Changes...' : 'Save All Changes'}
             </button>
 
             {message && (
               <div className="animate-scale-in" style={{ 
                 padding: '14px', 
-                background: message.includes('✅') ? 'rgba(52, 211, 153, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
-                border: `1px solid ${message.includes('✅') ? 'rgba(52, 211, 153, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`, 
+                background: message.includes('✅') ? 'rgba(5, 150, 105, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
+                border: `1px solid ${message.includes('✅') ? 'rgba(5, 150, 105, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`, 
                 borderRadius: '12px', 
-                color: message.includes('✅') ? '#34d399' : '#f87171', 
+                color: message.includes('✅') ? 'var(--success)' : 'var(--error)', 
                 fontSize: '0.9rem',
                 textAlign: 'center'
               }}>
@@ -225,15 +225,17 @@ const Profile = ({ handleLogout, setTab }) => {
                 </p>
               ) : (
                 savedCities.map(city => (
-                  <div key={city.id} style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div key={city.id} style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'var(--glass)', padding: '12px', borderRadius: '16px', border: '1px solid var(--card-border)' }}>
                     <div style={{ width: '50px', height: '50px', borderRadius: '12px', background: `url(${city.image_url || 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=200'}) center/cover` }}></div>
                     <div style={{ flex: 1 }}>
                       <p style={{ margin: 0, fontWeight: '700', fontSize: '0.9rem' }}>{city.name}</p>
                       <p style={{ margin: 0, fontSize: '0.75rem', opacity: 0.5 }}>{city.country}</p>
                     </div>
-                    <button 
+                    <button
+                      type="button"
+                      className="linklike-btn"
                       onClick={() => handleRemoveSaved(city.id)}
-                      style={{ background: 'transparent', border: 'none', color: '#f87171', padding: '8px', cursor: 'pointer' }}
+                      style={{ border: 'none', color: 'var(--accent)', padding: '8px', cursor: 'pointer' }}
                     >
                       ✕
                     </button>
@@ -244,8 +246,8 @@ const Profile = ({ handleLogout, setTab }) => {
           </div>
 
           {/* Account Actions */}
-          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', border: '1px solid rgba(239, 68, 68, 0.1)' }}>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '16px', color: '#f87171' }}>⚠️ Danger Zone</h2>
+          <div className="glass-card" style={{ padding: '32px', borderRadius: '32px', border: '1px solid var(--accent-subtle-border)' }}>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '16px', color: 'var(--accent)' }}>⚠️ Danger Zone</h2>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: '1.6' }}>
               Deleting your account is permanent. All your trips, stops, and activities will be lost forever.
             </p>
@@ -254,7 +256,7 @@ const Profile = ({ handleLogout, setTab }) => {
               <button 
                 className="outline" 
                 onClick={() => setShowDeleteConfirm(true)} 
-                style={{ width: '100%', padding: '14px', borderColor: 'rgba(239, 68, 68, 0.3)', color: '#f87171' }}
+                style={{ width: '100%', padding: '14px', borderColor: 'rgba(220, 38, 38, 0.45)', color: 'var(--error)' }}
               >
                 Delete My Account
               </button>
@@ -264,7 +266,7 @@ const Profile = ({ handleLogout, setTab }) => {
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button 
                     onClick={handleDeleteAccount} 
-                    style={{ flex: 1, background: '#ef4444', padding: '12px', fontSize: '0.85rem' }}
+                    style={{ flex: 1, background: 'var(--accent-gradient)', padding: '12px', fontSize: '0.85rem', color: 'var(--btn-text)' }}
                   >
                     Yes, Delete
                   </button>

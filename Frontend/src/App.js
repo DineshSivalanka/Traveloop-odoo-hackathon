@@ -23,6 +23,14 @@ function App() {
   const [selectedStopId, setSelectedStopId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [shareToken, setShareToken] = useState(null);
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.body.className = `${theme}-theme`;
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
   // Check for share link in URL hash
   useEffect(() => {
@@ -57,7 +65,7 @@ function App() {
 
   if (authLoading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#020617' }}>
+      <div className="app-loading-screen">
         <div className="animate-spin" style={{ fontSize: '2.5rem' }}>✨</div>
       </div>
     );
@@ -68,7 +76,7 @@ function App() {
     return <PublicView token={shareToken} />;
   }
 
-  if (!user) return <AuthPage />;
+  if (!user) return <AuthPage theme={theme} toggleTheme={toggleTheme} />;
 
   const navItems = [
     { id: 'home', label: 'Dashboard', icon: '🏠' },
@@ -104,7 +112,15 @@ function App() {
           ))}
         </nav>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={toggleTheme}
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
           <div className="sidebar-avatar" style={{ width: '32px', height: '32px', fontSize: '0.8rem' }}>
             {user.name?.[0]?.toUpperCase() || '?'}
           </div>

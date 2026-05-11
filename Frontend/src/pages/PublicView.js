@@ -27,7 +27,7 @@ const PublicView = ({ token }) => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#020617' }}>
+      <div className="app-loading-screen">
         <div className="animate-spin" style={{ fontSize: '2.5rem' }}>🌍</div>
       </div>
     );
@@ -35,7 +35,7 @@ const PublicView = ({ token }) => {
 
   if (!data) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#020617', color: '#fff' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg)', backgroundImage: 'var(--bg-image)', backgroundAttachment: 'fixed', color: 'var(--text-main)' }}>
         <div style={{ textAlign: 'center' }}>
           <h1 style={{ fontSize: '3rem' }}>404</h1>
           <p style={{ opacity: 0.6 }}>This trip is either private or doesn't exist.</p>
@@ -45,7 +45,7 @@ const PublicView = ({ token }) => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#020617', color: '#fff', padding: '40px 20px' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg)', backgroundImage: 'var(--bg-image)', backgroundAttachment: 'fixed', color: 'var(--text-main)', padding: '40px 20px' }}>
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         <div style={{ 
           height: '300px', 
@@ -54,8 +54,8 @@ const PublicView = ({ token }) => {
           marginBottom: '32px',
           position: 'relative'
         }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', borderRadius: '24px' }}></div>
-          <div style={{ position: 'absolute', bottom: '24px', left: '24px' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'var(--overlay-scrim)', borderRadius: '24px' }}></div>
+          <div style={{ position: 'absolute', bottom: '24px', left: '24px', color: '#fff', textShadow: '0 2px 16px rgba(0,0,0,0.5)' }}>
             <h1 style={{ fontSize: '2.5rem', fontWeight: '900', margin: 0 }}>{data.title}</h1>
             <p style={{ margin: '8px 0 0', opacity: 0.8 }}>A journey planned with Traveloop</p>
           </div>
@@ -66,11 +66,11 @@ const PublicView = ({ token }) => {
           <p style={{ lineHeight: '1.6', opacity: 0.8, marginBottom: '24px' }}>{data.description}</p>
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '16px' }}>
+            <div style={{ background: 'var(--glass)', border: '1px solid var(--card-border)', padding: '20px', borderRadius: '16px' }}>
               <p style={{ fontSize: '0.7rem', opacity: 0.5, textTransform: 'uppercase', marginBottom: '4px' }}>Start Date</p>
               <p style={{ fontWeight: '700' }}>{data.start_date}</p>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '16px' }}>
+            <div style={{ background: 'var(--glass)', border: '1px solid var(--card-border)', padding: '20px', borderRadius: '16px' }}>
               <p style={{ fontSize: '0.7rem', opacity: 0.5, textTransform: 'uppercase', marginBottom: '4px' }}>End Date</p>
               <p style={{ fontWeight: '700' }}>{data.end_date}</p>
             </div>
@@ -79,7 +79,7 @@ const PublicView = ({ token }) => {
 
         <div style={{ marginTop: '40px', textAlign: 'center' }}>
           <p style={{ opacity: 0.4, fontSize: '0.9rem', marginBottom: '20px' }}>Want to plan your own adventure?</p>
-          <button style={{ padding: '12px 32px' }} onClick={() => window.location.href = '/'}>
+          <button type="button" style={{ padding: '12px 32px' }} onClick={() => window.location.href = '/'}>
             Get Started with Traveloop
           </button>
         </div>

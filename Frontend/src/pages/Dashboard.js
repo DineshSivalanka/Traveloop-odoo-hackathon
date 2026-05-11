@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import API from '../api';
 
 const CARD_GRADIENTS = [
-  'linear-gradient(135deg,#1e1b4b 0%,#312e81 100%)',
-  'linear-gradient(135deg,#0c4a6e 0%,#075985 100%)',
-  'linear-gradient(135deg,#14532d 0%,#166534 100%)',
-  'linear-gradient(135deg,#4c0519 0%,#9f1239 100%)',
-  'linear-gradient(135deg,#431407 0%,#9a3412 100%)',
-  'linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%)',
+  'linear-gradient(135deg,#4f46e5 0%,#db2777 100%)',
+  'linear-gradient(135deg,#7c3aed 0%,#ea580c 100%)',
+  'linear-gradient(135deg,#6366f1 0%,#ec4899 55%,#f97316 100%)',
+  'linear-gradient(135deg,#581c87 0%,#be185d 100%)',
+  'linear-gradient(135deg,#312e81 0%,#a855f7 100%)',
+  'linear-gradient(135deg,#c026d3 0%,#f59e0b 100%)',
 ];
 
 const Dashboard = ({ setTab, setSelectedTrip }) => {
@@ -50,39 +50,40 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
     <div className="animate-fade-in" style={{ maxWidth: '1280px' }}>
 
       {/* ── Hero Banner ── */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.9) 100%)',
-        border: '1px solid rgba(99,102,241,0.2)',
+      <div className="hero-banner" style={{
+        background: 'var(--accent-gradient-hero)',
+        border: '1px solid var(--accent-subtle-border)',
         borderRadius: '24px',
         padding: 'clamp(32px, 5vw, 56px)',
         marginBottom: '40px',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+        boxShadow: '0 24px 64px var(--accent-glow)',
       }}>
         {/* decorative blobs */}
-        <div style={{ position:'absolute', top:'-60px', right:'-60px', width:'220px', height:'220px', borderRadius:'50%', background:'rgba(99,102,241,0.12)', filter:'blur(40px)', pointerEvents:'none' }} />
-        <div style={{ position:'absolute', bottom:'-40px', left:'40%', width:'180px', height:'180px', borderRadius:'50%', background:'rgba(217,70,239,0.1)', filter:'blur(40px)', pointerEvents:'none' }} />
+        <div style={{ position:'absolute', top:'-60px', right:'-60px', width:'220px', height:'220px', borderRadius:'50%', background:'var(--blob-a)', filter:'blur(48px)', pointerEvents:'none' }} />
+        <div style={{ position:'absolute', bottom:'-40px', left:'40%', width:'180px', height:'180px', borderRadius:'50%', background:'var(--blob-b)', filter:'blur(48px)', pointerEvents:'none' }} />
 
         <div style={{ position:'relative' }}>
-          <p style={{ color:'var(--text-muted)', fontSize:'0.8rem', letterSpacing:'3px', textTransform:'uppercase', marginBottom:'10px' }}>
+          <p style={{ color:'rgba(255,255,255,0.88)', fontSize:'0.8rem', letterSpacing:'3px', textTransform:'uppercase', marginBottom:'10px' }}>
             Welcome back
           </p>
-          <h1 style={{ fontSize:'clamp(2rem,5vw,3.2rem)', fontWeight:'900', letterSpacing:'-1px', marginBottom:'12px' }}>
-            Hello, <span style={{ background:'var(--accent-gradient)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
+          <h1 style={{ fontSize:'clamp(2rem,5vw,3.2rem)', fontWeight:'900', letterSpacing:'-1px', marginBottom:'12px', color:'#fff', textShadow:'0 2px 24px rgba(0,0,0,0.25)' }}>
+            Hello, <span style={{ color:'#fef3c7' }}>
               {data.userName}!
             </span> 🌍
           </h1>
-          <p style={{ color:'var(--text-muted)', fontSize:'1.05rem', marginBottom:'28px', maxWidth:'520px', lineHeight:'1.7' }}>
+          <p style={{ color:'rgba(255,255,255,0.92)', fontSize:'1.05rem', marginBottom:'28px', maxWidth:'520px', lineHeight:'1.7' }}>
             Track your journeys, plan new adventures, and discover the world one stop at a time.
           </p>
           <div style={{ display:'flex', gap:'14px', flexWrap:'wrap' }}>
-            <button onClick={() => setTab('createTrip')} style={{ padding:'13px 28px', fontSize:'0.95rem' }}>
+            <button type="button" onClick={() => setTab('createTrip')} style={{ padding:'13px 28px', fontSize:'0.95rem' }}>
               ✈️ Plan New Trip
             </button>
-            <button 
-              onClick={() => document.getElementById('your-trips')?.scrollIntoView({ behavior: 'smooth' })} 
-              className="outline" 
+            <button
+              type="button"
+              onClick={() => document.getElementById('your-trips')?.scrollIntoView({ behavior: 'smooth' })}
+              className="outline"
               style={{ padding:'13px 28px', fontSize:'0.95rem' }}
             >
               💼 View My Trips
@@ -94,10 +95,10 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
       {/* ── Stat Cards ── */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:'20px', marginBottom:'48px' }}>
         {[
-          { label:'Active Trips',     value: data.trips.length,                   icon:'🗺️', color:'#818cf8' },
-          { label:'Cities Planned',   value: data.trips.length * 3,               icon:'📍', color:'#34d399' },
-          { label:'Total Budget (₹)', value: `₹${data.totalBudget.toLocaleString()}`, icon:'💰', color:'#f59e0b' },
-          { label:'Countries',        value: [...new Set(data.popularCities.map(c => c.country))].length || '—', icon:'🌐', color:'#f472b6' },
+          { label:'Active Trips',     value: data.trips.length,                   icon:'🗺️', color:'var(--accent)' },
+          { label:'Cities Planned',   value: data.trips.length * 3,               icon:'📍', color:'var(--secondary)' },
+          { label:'Total Budget (₹)', value: `₹${data.totalBudget.toLocaleString()}`, icon:'💰', color:'var(--accent-light)' },
+          { label:'Countries',        value: [...new Set(data.popularCities.map(c => c.country))].length || '—', icon:'🌐', color:'var(--success)' },
         ].map((s, i) => (
           <div key={i} className="glass-card" style={{ padding:'24px 20px', textAlign:'center', borderBottom:`3px solid ${s.color}20`, position:'relative', overflow:'hidden' }}>
             <div style={{ fontSize:'1.8rem', marginBottom:'8px' }}>{s.icon}</div>
@@ -132,14 +133,14 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
                 style={{
                   borderRadius:'20px',
                   overflow:'hidden',
-                  border:'1px solid rgba(255,255,255,0.07)',
+                  border:'1px solid var(--card-border)',
                   cursor:'pointer',
                   transition:'all 0.3s ease',
-                  background:'rgba(15,23,42,0.8)',
-                  boxShadow:'0 4px 24px rgba(0,0,0,0.3)',
+                  background:'var(--card-bg-light)',
+                  boxShadow:'var(--shadow-card)',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.transform='translateY(-6px)'; e.currentTarget.style.boxShadow='0 16px 48px rgba(99,102,241,0.2)'; e.currentTarget.style.borderColor='rgba(99,102,241,0.4)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 4px 24px rgba(0,0,0,0.3)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.07)'; }}
+                onMouseEnter={e => { e.currentTarget.style.transform='translateY(-6px)'; e.currentTarget.style.boxShadow='var(--shadow-card-hover)'; e.currentTarget.style.borderColor='var(--card-border-hover)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='var(--shadow-card)'; e.currentTarget.style.borderColor=''; }}
               >
                 {/* Cover */}
                 <div style={{
@@ -147,7 +148,7 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
                   background: trip.cover_image_url ? `url(${trip.cover_image_url}) center/cover` : CARD_GRADIENTS[idx % CARD_GRADIENTS.length],
                   position:'relative',
                 }}>
-                  <div style={{ position:'absolute', inset:0, background:'linear-gradient(to top, rgba(15,23,42,0.85) 0%, transparent 60%)' }} />
+                  <div style={{ position:'absolute', inset:0, background:'linear-gradient(to top, var(--bg-secondary) 0%, transparent 60%)' }} />
                   <div style={{ position:'absolute', bottom:'12px', left:'16px', display:'flex', gap:'8px', alignItems:'center' }}>
                     <span style={{ background:'rgba(0,0,0,0.5)', backdropFilter:'blur(8px)', padding:'3px 10px', borderRadius:'20px', fontSize:'0.72rem', border:'1px solid rgba(255,255,255,0.1)' }}>
                       📅 {calcDays(trip.start_date, trip.end_date)} days
@@ -161,7 +162,7 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
                   <p style={{ fontSize:'0.82rem', color:'var(--text-muted)', marginBottom:'16px', lineHeight:'1.5', minHeight:'36px', overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>
                     {trip.description || 'No description provided.'}
                   </p>
-                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:'14px', borderTop:'1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:'14px', borderTop:'1px solid var(--card-border)' }}>
                     <div>
                       <p style={{ fontSize:'0.65rem', color:'var(--text-muted)', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'2px' }}>Budget</p>
                       <p style={{ color:'var(--accent-light)', fontWeight:'700', fontSize:'1rem' }}>₹{trip.budget ? Number(trip.budget).toLocaleString() : '0'}</p>
@@ -188,7 +189,7 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
                 className="glass-card"
                 onClick={() => setTab('addStop')}
                 style={{ padding:'18px', display:'flex', gap:'14px', alignItems:'center', cursor:'pointer', borderRadius:'16px', transition:'all 0.25s ease' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(99,102,241,0.4)'; e.currentTarget.style.transform='translateY(-3px)'; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor='var(--card-border-hover)'; e.currentTarget.style.transform='translateY(-3px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor=''; e.currentTarget.style.transform=''; }}
               >
                 <div style={{ 

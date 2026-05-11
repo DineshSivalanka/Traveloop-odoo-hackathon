@@ -96,9 +96,9 @@ const TripNotes = ({ tripId }) => {
               className="animate-fade-in"
               style={{ 
                 padding: '16px', 
-                background: 'rgba(255,255,255,0.03)', 
+                background: 'var(--glass)', 
                 borderRadius: '16px', 
-                border: '1px solid rgba(255,255,255,0.05)',
+                border: '1px solid var(--card-border)',
                 position: 'relative'
               }}
             >

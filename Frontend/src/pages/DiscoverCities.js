@@ -119,7 +119,7 @@ const DiscoverCities = ({ setTab, setSelectedCityId }) => {
                   {city.description || "Explore the vibrant culture, historic landmarks, and local flavors of this amazing destination."}
                 </p>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', padding: '16px', background: 'var(--glass)', borderRadius: '16px', border: '1px solid var(--card-border)' }}>
                   <div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Cost Index</div>
                     <div style={{ fontWeight: '800', color: 'var(--accent-light)' }}>₹{city.cost_index} <span style={{ fontSize: '0.8rem', fontWeight: '400', color: 'var(--text-muted)' }}>/ day</span></div>

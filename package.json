@@ -1,0 +1,8 @@
+{
+  "name": "traveloop",
+  "private": true,
+  "description": "Run API from repo root: npm run backend",
+  "scripts": {
+    "backend": "python Backend/app.py"
+  }
+}

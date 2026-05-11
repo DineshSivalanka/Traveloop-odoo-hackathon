@@ -67,7 +67,7 @@ const CityDetail = ({ cityId, setTab }) => {
 
   if (!city) {
     return (
-      <div className="animate-fade-in" style={{ textAlign: 'center', padding: '100px 40px', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '40px', margin: '40px auto', maxWidth: '600px' }}>
+      <div className="animate-fade-in" style={{ textAlign: 'center', padding: '100px 40px', border: '1px dashed var(--card-border)', borderRadius: '40px', margin: '40px auto', maxWidth: '600px' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-muted)' }}>City Not Found</h2>
         <p style={{ opacity: 0.4, margin: '16px 0 24px' }}>We couldn't find the details for this destination. It might have been moved or deleted.</p>
         <button className="outline" onClick={() => setTab('addStop')} style={{ padding: '12px 24px' }}>Go Back</button>
@@ -99,17 +99,19 @@ const CityDetail = ({ cityId, setTab }) => {
               <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: '900', margin: 0 }}>{city.name}</h1>
               <p style={{ margin: '4px 0 0', opacity: 0.6, letterSpacing: '3px', fontWeight: '700', color: 'var(--accent-light)' }}>{city.country.toUpperCase()}</p>
             </div>
-            <button 
+            <button
+              type="button"
+              className="icon-btn"
               onClick={handleSave}
               style={{ 
-                background: isSaved ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.05)', 
-                border: 'none', 
+                background: isSaved ? 'var(--accent-subtle)' : 'var(--glass)', 
+                border: '1px solid var(--card-border)', 
                 fontSize: '1.5rem', 
                 width: '48px', 
                 height: '48px', 
                 borderRadius: '16px', 
                 cursor: 'pointer',
-                color: isSaved ? '#ef4444' : '#fff',
+                color: isSaved ? 'var(--accent)' : 'var(--text-main)',
                 transition: 'all 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
@@ -120,7 +122,7 @@ const CityDetail = ({ cityId, setTab }) => {
             </button>
           </div>
         </div>
-        <button onClick={() => setTab('addStop')} style={{ padding: '14px 28px', borderRadius: '16px', fontWeight: '700' }}>
+        <button type="button" onClick={() => setTab('addStop')} style={{ padding: '14px 28px', borderRadius: '16px', fontWeight: '700' }}>
           Plan Visit to {city.name}
         </button>
       </header>
@@ -128,9 +130,9 @@ const CityDetail = ({ cityId, setTab }) => {
       {/* ── Overview Stats ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '56px' }}>
         {[
-          { label: 'Cost Index', value: city.cost_index, icon: '💰', color: '#818cf8' },
-          { label: 'Available Acts', value: activities.length, icon: '🎭', color: '#34d399' },
-          { label: 'Avg. Experience', value: `₹${averageCost}`, icon: '🏷️', color: '#f59e0b' }
+          { label: 'Cost Index', value: city.cost_index, icon: '💰', color: 'var(--accent-light)' },
+          { label: 'Available Acts', value: activities.length, icon: '🎭', color: 'var(--secondary)' },
+          { label: 'Avg. Experience', value: `₹${averageCost}`, icon: '🏷️', color: 'var(--accent)' }
         ].map((stat, i) => (
           <div key={i} className="glass-card" style={{ padding: '28px', borderRadius: '24px', borderBottom: `4px solid ${stat.color}40`, position: 'relative', overflow: 'hidden' }}>
             <div style={{ fontSize: '1.5rem', marginBottom: '12px' }}>{stat.icon}</div>
@@ -147,7 +149,7 @@ const CityDetail = ({ cityId, setTab }) => {
         </h2>
         
         {categories.length === 0 ? (
-          <div className="glass-card" style={{ padding: '80px 40px', textAlign: 'center', borderRadius: '32px', border: '1px dashed rgba(255,255,255,0.1)' }}>
+          <div className="glass-card" style={{ padding: '80px 40px', textAlign: 'center', borderRadius: '32px', border: '1px dashed var(--card-border)' }}>
             <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🏝️</div>
             <p style={{ opacity: 0.5, fontSize: '1.1rem' }}>No curated activities found for this city yet. Check back soon!</p>
           </div>
@@ -176,13 +178,13 @@ const CityDetail = ({ cityId, setTab }) => {
                     style={{ 
                       padding: '32px', 
                       borderRadius: '28px',
-                      background: 'rgba(255,255,255,0.02)',
-                      border: '1px solid rgba(255,255,255,0.06)',
+                      background: 'var(--card-bg-light)',
+                      border: '1px solid var(--card-border)',
                       animationDelay: `${j * 0.05}s`
                     }}
                   >
                     <h4 style={{ margin: '0 0 12px 0', fontSize: '1.25rem', fontWeight: '800' }}>{activity.name}</h4>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--card-border)' }}>
                       <span style={{ color: 'var(--accent-light)', fontWeight: '800', fontSize: '1.1rem' }}>₹{activity.base_cost}</span>
                       <span style={{ fontSize: '0.85rem', opacity: 0.5, fontWeight: '600' }}>⏱️ {activity.duration_hours}h Session</span>
                     </div>
@@ -200,9 +202,9 @@ const CityDetail = ({ cityId, setTab }) => {
         padding: 'clamp(32px, 6vw, 64px)', 
         borderRadius: '40px', 
         textAlign: 'center', 
-        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(217, 70, 239, 0.1) 100%)',
-        border: '1px solid rgba(99, 102, 241, 0.2)',
-        boxShadow: '0 32px 64px rgba(0,0,0,0.2)',
+        background: 'var(--cta-panel-bg)',
+        border: '1px solid var(--accent-subtle-border)',
+        boxShadow: 'var(--cta-panel-shadow)',
         position: 'relative',
         overflow: 'hidden'
       }}>
@@ -211,7 +213,7 @@ const CityDetail = ({ cityId, setTab }) => {
         <p style={{ opacity: 0.6, fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto 32px', lineHeight: 1.6 }}>
           Add this destination to your upcoming trip and start building your personalized itinerary today.
         </p>
-        <button onClick={() => setTab('addStop')} style={{ padding: '16px 48px', fontSize: '1.1rem', borderRadius: '18px', boxShadow: '0 12px 32px rgba(99, 102, 241, 0.3)' }}>
+        <button type="button" onClick={() => setTab('addStop')} style={{ padding: '16px 48px', fontSize: '1.1rem', borderRadius: '18px', boxShadow: '0 14px 40px var(--accent-glow)' }}>
           Start Planning Now
         </button>
       </div>

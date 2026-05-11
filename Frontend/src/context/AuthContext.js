@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import API from '../api';
+import API, { getNetworkErrorMessage } from '../api';
 
 const AuthContext = createContext(null);
 
@@ -66,7 +66,10 @@ export const AuthProvider = ({ children }) => {
       }
       return { success: false, error: 'Invalid login response' };
     } catch (err) {
-      return { success: false, error: err.response?.data?.error || 'Login failed' };
+      return {
+        success: false,
+        error: getNetworkErrorMessage(err) || err.response?.data?.error || 'Login failed',
+      };
     }
   };
 
