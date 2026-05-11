@@ -141,7 +141,7 @@ function App() {
       <div className={`main-wrapper${isSidebarOpen ? ' sidebar-open' : ''}`}>
         <main className="main-content">
           {tab === "home" && <Dashboard setTab={setTab} setSelectedTrip={setSelectedTrip} />}
-          {tab === "createTrip" && <CreateTrip setTab={setTab} fetchTrips={fetchTrips} />}
+          {tab === "createTrip" && <CreateTrip setTab={setTab} fetchTrips={fetchTrips} setSelectedTrip={setSelectedTrip} />}
           {tab === "budget" && <Budget trips={trips} />}
           {tab === "addStop" && <AddStop tripId={selectedTrip} setTab={setTab} setSelectedCityId={setSelectedCityId} />}
           {tab === "cityDetail" && <CityDetail cityId={selectedCityId} setTab={setTab} />}

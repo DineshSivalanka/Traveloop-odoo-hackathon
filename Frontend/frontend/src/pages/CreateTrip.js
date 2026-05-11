@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import API from '../api';
 
-const CreateTrip = ({ setTab, fetchTrips }) => {
+const CreateTrip = ({ setTab, fetchTrips, setSelectedTrip }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
@@ -30,10 +30,17 @@ const CreateTrip = ({ setTab, fetchTrips }) => {
       end_date: endDate,
       budget: budget ? parseFloat(budget) : 0,
       cover_image_url: coverImage
-    }).then(() => {
+    }).then((res) => {
       setLoading(false);
       fetchTrips();
-      setTab("home");
+      
+      // Directly open the new trip detail page
+      if (res.data && res.data.trip_id) {
+        setSelectedTrip(res.data.trip_id);
+        setTab("tripDetail");
+      } else {
+        setTab("home");
+      }
     }).catch(err => {
       console.error(err);
       setError("Failed to create trip. Please check your connection.");

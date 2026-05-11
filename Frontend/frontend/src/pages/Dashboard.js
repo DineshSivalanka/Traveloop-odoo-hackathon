@@ -85,8 +85,12 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
             <button onClick={() => setTab('createTrip')} style={{ padding:'13px 28px', fontSize:'0.95rem' }}>
               ✈️ Plan New Trip
             </button>
-            <button onClick={() => setTab('addStop')} className="outline" style={{ padding:'13px 28px', fontSize:'0.95rem' }}>
-              🔍 Explore Cities
+            <button 
+              onClick={() => document.getElementById('your-trips')?.scrollIntoView({ behavior: 'smooth' })} 
+              className="outline" 
+              style={{ padding:'13px 28px', fontSize:'0.95rem' }}
+            >
+              💼 View My Trips
             </button>
           </div>
         </div>
@@ -109,7 +113,7 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
       </div>
 
       {/* ── Your Trips ── */}
-      <section style={{ marginBottom:'56px' }}>
+      <section id="your-trips" style={{ marginBottom:'56px', scrollMarginTop: '100px' }}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'24px' }}>
           <h2 style={{ fontSize:'1.4rem', fontWeight:'700' }}>🌎 Your Trips</h2>
           <button onClick={() => setTab('createTrip')} className="outline" style={{ padding:'8px 18px', fontSize:'0.8rem' }}>
