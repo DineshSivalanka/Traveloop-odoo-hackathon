@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import API from '../api';
 
-const DEST_EMOJIS = { India: '🇮🇳', Japan: '🇯🇵', Thailand: '🇹🇭', Indonesia: '🇮🇩',
-  Singapore: '🇸🇬', UAE: '🇦🇪', France: '🇫🇷', Italy: '🇮🇹', Spain: '🇪🇸',
-  Netherlands: '🇳🇱', UK: '🇬🇧', USA: '🇺🇸', Mexico: '🇲🇽', Brazil: '🇧🇷',
-  'South Africa': '🇿🇦', Australia: '🇦🇺' };
-
 const CARD_GRADIENTS = [
   'linear-gradient(135deg,#1e1b4b 0%,#312e81 100%)',
   'linear-gradient(135deg,#0c4a6e 0%,#075985 100%)',

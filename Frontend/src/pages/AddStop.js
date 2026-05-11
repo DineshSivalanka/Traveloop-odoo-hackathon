@@ -8,7 +8,6 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date(Date.now() + 2*86400000).toISOString().split('T')[0]);
-  const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -242,14 +241,6 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Private Notes</label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Bucket list items for this city..."
-                />
-              </div>
 
               {error && <div className="alert alert-error">⚠️ {error}</div>}
 
