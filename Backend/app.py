@@ -17,15 +17,15 @@ from routes.dashboard_routes import dashboard_bp
 app = Flask(__name__)
 CORS(app)
 
-# Register all blueprints
-app.register_blueprint(user_bp)
-app.register_blueprint(city_bp)
-app.register_blueprint(trip_bp)
-app.register_blueprint(stop_bp)
-app.register_blueprint(activity_bp)
-app.register_blueprint(checklist_bp)
-app.register_blueprint(note_bp)
-app.register_blueprint(dashboard_bp)
+# Register all blueprints with /api prefix
+app.register_blueprint(user_bp, url_prefix='/api')
+app.register_blueprint(city_bp, url_prefix='/api')
+app.register_blueprint(trip_bp, url_prefix='/api')
+app.register_blueprint(stop_bp, url_prefix='/api')
+app.register_blueprint(activity_bp, url_prefix='/api')
+app.register_blueprint(checklist_bp, url_prefix='/api')
+app.register_blueprint(note_bp, url_prefix='/api')
+app.register_blueprint(dashboard_bp, url_prefix='/api')
 
 # ── API Aliases for Frontend Compatibility ──────────────────
 @app.route("/users", methods=["POST"])
