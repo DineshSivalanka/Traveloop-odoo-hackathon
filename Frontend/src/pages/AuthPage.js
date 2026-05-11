@@ -188,8 +188,13 @@ const AuthPage = ({ theme = 'light', toggleTheme = () => {} }) => {
 
               {view === 'forgot' && (
                 <div className="auth-forgot-nav">
-                  <button type="button" className="auth-forgot-back linklike-btn" onClick={() => switchView('login')}>
-                    ← Back to sign in
+                  <button
+                    type="button"
+                    className="auth-forgot-back linklike-btn"
+                    onClick={() => switchView('login')}
+                    aria-label="Back to sign in"
+                  >
+                    ← Back
                   </button>
                 </div>
               )}
@@ -206,11 +211,11 @@ const AuthPage = ({ theme = 'light', toggleTheme = () => {} }) => {
                   <div className="auth-forgot-head-icon" aria-hidden="true">
                     🔑
                   </div>
-                  <h2 style={{ fontSize: '1.12rem', fontWeight: '800', margin: '0 0 8px', color: 'var(--text-main)' }}>
+                  <h2 style={{ fontSize: '1.08rem', fontWeight: '800', margin: '0 0 6px', color: 'var(--text-main)' }}>
                     Reset your password
                   </h2>
-                  <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.55 }}>
-                    Enter the email you used for Traveloop. If an account exists, we&apos;ll email a reset link.
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.55 }}>
+                    Enter your email and we&apos;ll send a reset link (if an account exists).
                   </p>
                 </div>
               )}
@@ -222,8 +227,8 @@ const AuthPage = ({ theme = 'light', toggleTheme = () => {} }) => {
                   </div>
                   <h3>Check your inbox</h3>
                   <p>
-                    If an account exists for <strong style={{ color: 'var(--text-main)' }}>{form.email}</strong>, we
-                    sent a password reset link. The message may take a minute to arrive.
+                    If an account exists for <strong style={{ color: 'var(--text-main)' }}>{form.email}</strong>, we sent a
+                    reset link. It may take a minute to arrive.
                   </p>
                   <p className="auth-forgot-hint">Didn&apos;t get it? Look in Spam or Promotions, then try again.</p>
                   <button type="button" onClick={() => switchView('login')} style={{ padding: '12px 20px', fontSize: '0.9rem' }}>
@@ -289,7 +294,7 @@ const AuthPage = ({ theme = 'light', toggleTheme = () => {} }) => {
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
                       <label style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Password</label>
-                      <button type="button" onClick={openForgot} style={{ ...linkBtn, fontSize: '0.75rem' }}>
+                      <button type="button" className="linklike-btn" onClick={openForgot} style={{ ...linkBtn, fontSize: '0.75rem' }}>
                         Forgot password?
                       </button>
                     </div>
@@ -418,6 +423,14 @@ const AuthPage = ({ theme = 'light', toggleTheme = () => {} }) => {
                     ) : (
                       'Send reset link'
                     )}
+                  </button>
+                  <button
+                    type="button"
+                    className="linklike-btn"
+                    onClick={() => switchView('login')}
+                    style={{ ...linkBtn, textAlign: 'center', marginTop: '2px' }}
+                  >
+                    Return to sign in
                   </button>
                 </form>
               )}

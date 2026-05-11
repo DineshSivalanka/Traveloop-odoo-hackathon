@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import API from '../api';
+import dashboardHeroImage from '../assets/dashboard-hero.png';
+
+const DASHBOARD_HERO_IMAGE =
+  dashboardHeroImage;
 
 const CARD_GRADIENTS = [
   'linear-gradient(135deg,#4f46e5 0%,#db2777 100%)',
@@ -51,7 +55,11 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
 
       {/* ── Hero Banner ── */}
       <div className="hero-banner" style={{
+        // Keep the gradient as a guaranteed fallback, then layer a photo behind a readable overlay.
         background: 'var(--accent-gradient-hero)',
+        backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.28), rgba(0,0,0,0.62)), url("${DASHBOARD_HERO_IMAGE}")`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'right center',
         border: '1px solid var(--accent-subtle-border)',
         borderRadius: '24px',
         padding: 'clamp(32px, 5vw, 56px)',
