@@ -6,8 +6,12 @@ const CityDetail = ({ cityId, setTab }) => {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [isSaved, setIsSaved] = useState(false);
+
   const loadCityData = useCallback(() => {
     setLoading(true);
+    const userId = localStorage.getItem('user_id');
+    
     API.get(`/cities/${cityId}`)
       .then(res => {
         setCity(res.data);
@@ -15,6 +19,14 @@ const CityDetail = ({ cityId, setTab }) => {
       })
       .then(res => {
         setActivities(res.data || []);
+        if (userId) {
+          return API.get(`/saved/${userId}`);
+        }
+      })
+      .then(res => {
+        if (res && res.data) {
+          setIsSaved(res.data.some(c => c.id === parseInt(cityId)));
+        }
         setLoading(false);
       })
       .catch(err => {
@@ -22,6 +34,21 @@ const CityDetail = ({ cityId, setTab }) => {
         setLoading(false);
       });
   }, [cityId]);
+
+  const handleSave = () => {
+    const userId = localStorage.getItem('user_id');
+    if (!userId) return;
+
+    if (isSaved) {
+      API.delete(`/saved/${userId}/${cityId}`)
+        .then(() => setIsSaved(false))
+        .catch(err => console.error(err));
+    } else {
+      API.post(`/saved`, { user_id: userId, city_id: cityId })
+        .then(() => setIsSaved(true))
+        .catch(err => console.error(err));
+    }
+  };
 
   useEffect(() => {
     if (cityId) {
@@ -67,9 +94,30 @@ const CityDetail = ({ cityId, setTab }) => {
           >
             ←
           </button>
-          <div>
-            <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: '900', margin: 0 }}>{city.name}</h1>
-            <p style={{ margin: '4px 0 0', opacity: 0.6, letterSpacing: '3px', fontWeight: '700', color: 'var(--accent-light)' }}>{city.country.toUpperCase()}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div>
+              <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: '900', margin: 0 }}>{city.name}</h1>
+              <p style={{ margin: '4px 0 0', opacity: 0.6, letterSpacing: '3px', fontWeight: '700', color: 'var(--accent-light)' }}>{city.country.toUpperCase()}</p>
+            </div>
+            <button 
+              onClick={handleSave}
+              style={{ 
+                background: isSaved ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.05)', 
+                border: 'none', 
+                fontSize: '1.5rem', 
+                width: '48px', 
+                height: '48px', 
+                borderRadius: '16px', 
+                cursor: 'pointer',
+                color: isSaved ? '#ef4444' : '#fff',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              {isSaved ? '❤️' : '🤍'}
+            </button>
           </div>
         </div>
         <button onClick={() => setTab('addStop')} style={{ padding: '14px 28px', borderRadius: '16px', fontWeight: '700' }}>

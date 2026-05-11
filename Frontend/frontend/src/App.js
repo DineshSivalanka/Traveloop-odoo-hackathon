@@ -10,6 +10,7 @@ import Budget from "./pages/Budget";
 import FullItinerary from "./pages/FullItinerary";
 import AuthPage from "./pages/AuthPage";
 import Profile from "./pages/Profile";
+import PublicView from "./pages/PublicView";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
@@ -20,6 +21,17 @@ function App() {
   const [selectedCityId, setSelectedCityId] = useState(null);
   const [selectedStopId, setSelectedStopId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [shareToken, setShareToken] = useState(null);
+
+  // Check for share link in URL hash
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#share=')) {
+      const token = hash.split('=')[1];
+      setShareToken(token);
+      setTab('publicView');
+    }
+  }, []);
 
   const fetchTrips = React.useCallback(() => {
     if (!user) return;
@@ -32,16 +44,12 @@ function App() {
     if (user) fetchTrips();
   }, [user, fetchTrips]);
 
-  // Handle window resize for sidebar
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 1024) {
-        setIsSidebarOpen(false);
-      } else {
-        setIsSidebarOpen(true);
-      }
+      if (window.innerWidth <= 1024) setIsSidebarOpen(false);
+      else setIsSidebarOpen(true);
     };
-    handleResize(); // Init
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -54,20 +62,24 @@ function App() {
     );
   }
 
+  // Handle Public View separately so it doesn't require login
+  if (tab === 'publicView' && shareToken) {
+    return <PublicView token={shareToken} />;
+  }
+
   if (!user) return <AuthPage />;
 
   const navItems = [
-    { id: 'home',    label: 'Dashboard', icon: '🏠' },
-    { id: 'budget',  label: 'Budget',    icon: '💰' },
-    { id: 'profile', label: 'Settings',  icon: '⚙️' },
+    { id: 'home', label: 'Dashboard', icon: '🏠' },
+    { id: 'budget', label: 'Budget', icon: '💰' },
+    { id: 'profile', label: 'Settings', icon: '⚙️' },
   ];
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <div className="app-shell">
-      
-      {/* ── Header ── */}
+
       <header className="app-header">
         <div className="header-left">
           <button className="hamburger-btn" onClick={toggleSidebar}>
@@ -97,13 +109,11 @@ function App() {
         </div>
       </header>
 
-      {/* ── Sidebar Overlay (Mobile) ── */}
-      <div 
-        className={`sidebar-overlay${isSidebarOpen ? ' active' : ''}`} 
+      <div
+        className={`sidebar-overlay${isSidebarOpen ? ' active' : ''}`}
         onClick={() => setIsSidebarOpen(false)}
       ></div>
 
-      {/* ── Sidebar ── */}
       <aside className={`sidebar${!isSidebarOpen ? ' collapsed' : ''}`}>
         <nav className="sidebar-nav">
           {navItems.map(item => (
@@ -128,18 +138,17 @@ function App() {
         </div>
       </aside>
 
-      {/* ── Main Content Wrapper ── */}
       <div className={`main-wrapper${isSidebarOpen ? ' sidebar-open' : ''}`}>
         <main className="main-content">
-          {tab === "home"           && <Dashboard setTab={setTab} setSelectedTrip={setSelectedTrip} />}
-          {tab === "createTrip"    && <CreateTrip setTab={setTab} fetchTrips={fetchTrips} />}
-          {tab === "budget"        && <Budget trips={trips} />}
-          {tab === "addStop"       && <AddStop tripId={selectedTrip} setTab={setTab} setSelectedCityId={setSelectedCityId} />}
-          {tab === "cityDetail"    && <CityDetail cityId={selectedCityId} setTab={setTab} />}
-          {tab === "tripDetail"    && <TripDetail tripId={selectedTrip} setTab={setTab} setSelectedStopId={setSelectedStopId} />}
+          {tab === "home" && <Dashboard setTab={setTab} setSelectedTrip={setSelectedTrip} />}
+          {tab === "createTrip" && <CreateTrip setTab={setTab} fetchTrips={fetchTrips} />}
+          {tab === "budget" && <Budget trips={trips} />}
+          {tab === "addStop" && <AddStop tripId={selectedTrip} setTab={setTab} setSelectedCityId={setSelectedCityId} />}
+          {tab === "cityDetail" && <CityDetail cityId={selectedCityId} setTab={setTab} />}
+          {tab === "tripDetail" && <TripDetail tripId={selectedTrip} setTab={setTab} setSelectedStopId={setSelectedStopId} />}
           {tab === "fullItinerary" && <FullItinerary tripId={selectedTrip} setTab={setTab} />}
-          {tab === "stopDetail"    && <StopDetail stopId={selectedStopId} tripId={selectedTrip} setTab={setTab} />}
-          {tab === "profile"       && <Profile handleLogout={logout} setTab={setTab} />}
+          {tab === "stopDetail" && <StopDetail stopId={selectedStopId} tripId={selectedTrip} setTab={setTab} />}
+          {tab === "profile" && <Profile handleLogout={logout} setTab={setTab} />}
         </main>
 
         <footer className="app-footer">

@@ -81,7 +81,7 @@ def get_user_profile(user_id):
     conn = connect_db()
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, name, email, avatar_url, is_admin, created_at FROM users WHERE id = %s",
+        "SELECT id, name, email, avatar_url, is_admin, created_at, language FROM users WHERE id = %s",
         (user_id,)
     )
     row = cur.fetchone()
@@ -94,25 +94,80 @@ def get_user_profile(user_id):
             "email":      row[2],
             "avatar_url": row[3],
             "is_admin":   row[4],
-            "created_at": str(row[5])
+            "created_at": str(row[5]),
+            "language":   row[6]
         }
     return None
 
 # ── Update Profile ───────────────────────────────────────────
-def update_user_profile(user_id, name, password=None, avatar_url=None):
+def update_user_profile(user_id, name, password=None, avatar_url=None, language='English'):
     conn = connect_db()
     cur = conn.cursor()
-    if password:
-        hashed = hash_password(password)
+    try:
+        if password:
+            hashed = hash_password(password)
+            cur.execute(
+                "UPDATE users SET name = %s, password = %s, avatar_url = COALESCE(%s, avatar_url), language = %s WHERE id = %s",
+                (name, hashed, avatar_url, language, user_id)
+            )
+        else:
+            cur.execute(
+                "UPDATE users SET name = %s, avatar_url = COALESCE(%s, avatar_url), language = %s WHERE id = %s",
+                (name, avatar_url, language, user_id)
+            )
+        conn.commit()
+    finally:
+        cur.close()
+        conn.close()
+
+# ── Delete User ──────────────────────────────────────────────
+def delete_user(user_id):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+# ── Saved Destinations ───────────────────────────────────────
+def get_saved_destinations(user_id):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT c.id, c.name, c.country, c.image_url
+        FROM user_saved_destinations usd
+        JOIN cities c ON c.id = usd.city_id
+        WHERE usd.user_id = %s
+        ORDER BY usd.created_at DESC
+        """,
+        (user_id,)
+    )
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [{"id": r[0], "name": r[1], "country": r[2], "image_url": r[3]} for r in rows]
+
+def add_saved_destination(user_id, city_id):
+    conn = connect_db()
+    cur = conn.cursor()
+    try:
         cur.execute(
-            "UPDATE users SET name = %s, password = %s, avatar_url = COALESCE(%s, avatar_url) WHERE id = %s",
-            (name, hashed, avatar_url, user_id)
+            "INSERT INTO user_saved_destinations (user_id, city_id) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+            (user_id, city_id)
         )
-    else:
-        cur.execute(
-            "UPDATE users SET name = %s, avatar_url = COALESCE(%s, avatar_url) WHERE id = %s",
-            (name, avatar_url, user_id)
-        )
+        conn.commit()
+    finally:
+        cur.close()
+        conn.close()
+
+def remove_saved_destination(user_id, city_id):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(
+        "DELETE FROM user_saved_destinations WHERE user_id = %s AND city_id = %s",
+        (user_id, city_id)
+    )
     conn.commit()
     cur.close()
     conn.close()

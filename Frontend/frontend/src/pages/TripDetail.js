@@ -137,13 +137,51 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
               </div>
             </div>
             
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+              {trip.is_public && (
+                <div style={{ 
+                  background: 'rgba(52, 211, 153, 0.1)', 
+                  border: '1px solid rgba(52, 211, 153, 0.3)', 
+                  padding: '8px 16px', 
+                  borderRadius: '12px', 
+                  color: '#34d399', 
+                  fontSize: '0.8rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{ fontSize: '1rem' }}>🔗</span> Public Link Active
+                </div>
+              )}
+              
+              <button 
+                className={trip.is_public ? "outline" : ""}
+                onClick={async () => {
+                  if (trip.is_public) {
+                    if (window.confirm("Make this trip private? The share link will stop working.")) {
+                      await API.delete(`/trips/${tripId}/share`);
+                      loadTripData();
+                    }
+                  } else {
+                    const res = await API.post(`/trips/${tripId}/share`);
+                    const url = `${window.location.origin}/#share=${res.data.share_token}`;
+                    navigator.clipboard.writeText(url);
+                    alert("Trip is now public! Share link copied to clipboard. 🔗");
+                    loadTripData();
+                  }
+                }}
+                style={{ padding: '14px 24px', borderRadius: '16px', fontSize: '0.9rem', fontWeight: '700' }}
+              >
+                {trip.is_public ? '🔒 Make Private' : '🔗 Share Trip'}
+              </button>
+
               <button 
                 onClick={() => setTab('fullItinerary')}
                 style={{ padding: '14px 28px', fontSize: '1rem', fontWeight: '700', borderRadius: '16px', boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)' }}
               >
-                🗺️ Full Itinerary View
+                🗺️ Itinerary
               </button>
+
               <button 
                 className="outline" 
                 onClick={handleDeleteTrip}
@@ -156,7 +194,7 @@ const TripDetail = ({ tripId, setTab, setSelectedStopId }) => {
                   borderRadius: '16px'
                 }}
               >
-                Delete
+                🗑️
               </button>
             </div>
           </div>

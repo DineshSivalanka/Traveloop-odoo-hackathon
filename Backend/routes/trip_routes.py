@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models.trip_model import (
     create_trip, get_trips_by_user, get_trip_by_id,
-    update_trip, delete_trip, make_trip_public,
+    update_trip, delete_trip, make_trip_public, revoke_trip_public,
     get_trip_by_token, get_trip_budget_breakdown, get_full_trip
 )
 
@@ -59,6 +59,12 @@ def share_trip(trip_id):
     if token:
         return jsonify({"share_token": token, "share_url": f"/public/{token}"}), 200
     return jsonify({"error": "Trip not found"}), 404
+
+# DELETE /trips/<trip_id>/share → makes trip private
+@trip_bp.route("/trips/<int:trip_id>/share", methods=["DELETE"])
+def unshare_trip(trip_id):
+    revoke_trip_public(trip_id)
+    return jsonify({"message": "Trip is now private"}), 200
 
 # GET /public/<token>  → public read-only view
 @trip_bp.route("/public/<string:token>", methods=["GET"])

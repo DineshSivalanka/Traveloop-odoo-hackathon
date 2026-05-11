@@ -1,5 +1,9 @@
 from flask import Flask
 from flask_cors import CORS
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from routes.user_routes      import user_bp
 from routes.city_routes      import city_bp
@@ -45,4 +49,5 @@ def notes_alias():
     return add_note()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)

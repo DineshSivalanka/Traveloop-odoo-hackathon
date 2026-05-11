@@ -87,6 +87,17 @@ def make_trip_public(trip_id):
     conn.close()
     return result[0] if result else None
 
+def revoke_trip_public(trip_id):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute(
+        "UPDATE trips SET is_public = FALSE, share_token = NULL WHERE id = %s",
+        (trip_id,)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def get_trip_by_token(token):
     conn = connect_db()
     cur = conn.cursor()
