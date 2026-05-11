@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       const userId = localStorage.getItem('user_id');
       if (userId) {
         try {
-          const res = await API.get(`/profile/${userId}`);
+          const res = await API.get(`profile/${userId}`);
           const restoredUser = normalizeUser(res.data);
           if (restoredUser?.id) {
             setUser(restoredUser);
@@ -53,10 +53,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await API.post('/login', { email, password });
+      const res = await API.post('login', { email, password });
       if (res.data.user_id) {
         localStorage.setItem('user_id', res.data.user_id);
-        const profileRes = await API.get(`/profile/${res.data.user_id}`);
+        const profileRes = await API.get(`profile/${res.data.user_id}`);
         const userData = normalizeUser(profileRes.data);
         if (!userData?.id) {
           return { success: false, error: 'Invalid profile response' };

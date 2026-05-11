@@ -11,7 +11,7 @@ const DiscoverCities = ({ setTab, setSelectedCityId }) => {
 
   const loadCities = React.useCallback((query = '', region = '') => {
     setLoading(true);
-    let url = "/cities";
+    let url = "cities";
     const params = [];
     if (query) params.push(`q=${query}`);
     if (region) params.push(`region=${region}`);

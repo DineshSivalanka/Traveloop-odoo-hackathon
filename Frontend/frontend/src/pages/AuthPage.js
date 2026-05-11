@@ -43,7 +43,7 @@ const AuthPage = () => {
     if (form.password.length < 4) return setError('Password must be at least 4 characters.');
     setLoading(true);
     try {
-      const res = await API.post('/signup', { name: form.name, email: form.email, password: form.password });
+      const res = await API.post('signup', { name: form.name, email: form.email, password: form.password });
       if (res.data.user_id) {
         const r = await login(form.email, form.password);
         if (!r.success) { setError(r.error || 'Auto-login failed. Please log in.'); setLoading(false); }
@@ -62,7 +62,7 @@ const AuthPage = () => {
     if (!validEmail(form.email)) return setError('Enter a valid email address.');
     setLoading(true);
     try {
-      await API.post('/forgot-password', { email: form.email });
+      await API.post('forgot-password', { email: form.email });
       setSuccess('If this email exists in our system, a reset link has been sent. Check your inbox.');
     } catch {
       /* still show success to avoid email enumeration */

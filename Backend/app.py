@@ -15,7 +15,7 @@ from routes.note_routes      import note_bp
 from routes.dashboard_routes import dashboard_bp
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Register all blueprints with /api prefix
 app.register_blueprint(user_bp, url_prefix='/api')

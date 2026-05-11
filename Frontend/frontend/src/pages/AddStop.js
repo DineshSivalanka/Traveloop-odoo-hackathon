@@ -17,7 +17,7 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
 
   const loadCities = React.useCallback((query = '', region = '') => {
     setLoading(true);
-    let url = "/cities";
+    let url = "cities";
     const params = [];
     if (query) params.push(`q=${query}`);
     if (region) params.push(`region=${region}`);
@@ -57,10 +57,10 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
     setError('');
 
     try {
-      const existingStops = await API.get(`/stops/${tripId}`);
+      const existingStops = await API.get(`stops/${tripId}`);
       const nextOrder = (existingStops.data?.length || 0) + 1;
 
-      await API.post("/stops", {
+      await API.post("stops", {
         trip_id: tripId,
         city_name: selectedCity.name,
         city_id: selectedCity.id,

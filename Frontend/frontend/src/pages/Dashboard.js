@@ -23,7 +23,7 @@ const Dashboard = ({ setTab, setSelectedTrip }) => {
   useEffect(() => {
     const userId = localStorage.getItem('user_id');
     if (!userId) return;
-    API.get(`/dashboard/${userId}`)
+    API.get(`dashboard/${userId}`)
       .then(res => setData({
         trips:         res.data.recent_trips    || [],
         totalBudget:   res.data.total_budget    || 0,
