@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import API, { getNetworkErrorMessage } from '../api';
 import { useAuth } from '../context/AuthContext';
 
-/** Single full-screen hero (set via CSS var on .auth-page-root) */
-const AUTH_BACKGROUND_URL =
-  'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=85';
+import authBg from '../assets/auth-bg.png';
 
 /* ── view: 'login' | 'signup' | 'forgot' ── */
 const AuthPage = ({ theme = 'light', toggleTheme = () => {} }) => {
@@ -114,7 +112,7 @@ const AuthPage = ({ theme = 'light', toggleTheme = () => {} }) => {
   return (
     <div
       className="auth-page-root"
-      style={{ '--auth-hero-image': `url("${AUTH_BACKGROUND_URL}")` }}
+      style={{ '--auth-hero-image': `url("${authBg}")` }}
     >
       <button
         type="button"
