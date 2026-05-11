@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- ─────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS cities (
     id          SERIAL PRIMARY KEY,
-    name        VARCHAR(120)  NOT NULL,
+    name        VARCHAR(120) UNIQUE NOT NULL,
     country     VARCHAR(120),
     region      VARCHAR(120),
     cost_index  NUMERIC(8,2)  DEFAULT 0,
@@ -139,33 +139,33 @@ ALTER TABLE cities
 ALTER COLUMN cost_index TYPE NUMERIC(8,2);
 
 
-INSERT INTO cities (name, country, region, cost_index, popularity, description) VALUES
-('Mumbai',         'India',        'South Asia',      2500, 95, 'Financial capital of India with iconic landmarks.'),
-('Delhi',          'India',        'South Asia',      2200, 92, 'India''s capital with historic Mughal architecture.'),
-('Jaipur',         'India',        'South Asia',      1800, 88, 'The Pink City, gateway to Rajasthan.'),
-('Goa',            'India',        'South Asia',      2800, 90, 'Tropical beaches, seafood, and vibrant nightlife.'),
-('Bangalore',      'India',        'South Asia',      2600, 85, 'Silicon Valley of India with a cool climate.'),
-('Kerala',         'India',        'South Asia',      2400, 87, 'Serene backwaters, spices, and Ayurveda.'),
-('Varanasi',       'India',        'South Asia',      1600, 82, 'One of the world''s oldest living cities.'),
-('Agra',           'India',        'South Asia',      1700, 91, 'Home to the iconic Taj Mahal.'),
-('Chennai',        'India',        'South Asia',      2100, 80, 'Cultural capital of South India.'),
-('Kolkata',        'India',        'South Asia',      1900, 78, 'City of joy with colonial architecture.'),
-('Tokyo',          'Japan',        'East Asia',       7500, 98, 'Ultra-modern metropolis blending tradition and innovation.'),
-('Bangkok',        'Thailand',     'Southeast Asia',  3500, 96, 'Vibrant street life, temples, and floating markets.'),
-('Bali',           'Indonesia',    'Southeast Asia',  3200, 94, 'Spiritual island paradise of rice terraces and temples.'),
-('Singapore',      'Singapore',    'Southeast Asia',  6500, 93, 'Futuristic city-state with world-class food.'),
-('Dubai',          'UAE',          'Middle East',     8000, 95, 'Luxury skyscrapers, desert safaris, and world records.'),
-('Paris',          'France',       'Western Europe',  9000, 99, 'City of love, the Eiffel Tower, and haute cuisine.'),
-('Rome',           'Italy',        'Southern Europe', 8000, 97, 'Eternal city of Colosseum, Vatican, and gelato.'),
-('Barcelona',      'Spain',        'Southern Europe', 7500, 94, 'Gaudí masterpieces, beaches, and Catalan culture.'),
-('Amsterdam',      'Netherlands',  'Western Europe',  8500, 90, 'Canals, tulips, and world-class museums.'),
-('London',         'UK',           'Western Europe',  10000,98, 'Historic capital with royal heritage and theatre.'),
-('New York',       'USA',          'North America',   12000,99, 'The city that never sleeps.'),
-('Cancun',         'Mexico',       'Central America', 5500, 88, 'Caribbean beaches, Mayan ruins, and cenotes.'),
-('Rio de Janeiro', 'Brazil',       'South America',   5000, 91, 'Carnival, Christ the Redeemer, and Copacabana.'),
-('Cape Town',      'South Africa', 'Africa',          6000, 89, 'Table Mountain, wine country, and coastline.'),
-('Sydney',         'Australia',    'Oceania',         9500, 93, 'Iconic Opera House, Harbour Bridge, and beaches.')
-ON CONFLICT DO NOTHING;
+INSERT INTO cities (name, country, region, cost_index, popularity, description, image_url) VALUES
+('Mumbai',         'India',        'South Asia',      2500, 95, 'Financial capital of India with iconic landmarks.', NULL),
+('Delhi',          'India',        'South Asia',      2200, 92, 'India''s capital with historic Mughal architecture.', 'https://images.unsplash.com/photo-1587474260584-1f3c8b44379f?auto=format&fit=crop&w=1200&q=80'),
+('Jaipur',         'India',        'South Asia',      1800, 88, 'The Pink City, gateway to Rajasthan.', NULL),
+('Goa',            'India',        'South Asia',      2800, 90, 'Tropical beaches, seafood, and vibrant nightlife.', NULL),
+('Bangalore',      'India',        'South Asia',      2600, 85, 'Silicon Valley of India with a cool climate.', NULL),
+('Kerala',         'India',        'South Asia',      2400, 87, 'Serene backwaters, spices, and Ayurveda.', NULL),
+('Varanasi',       'India',        'South Asia',      1600, 82, 'One of the world''s oldest living cities.', NULL),
+('Agra',           'India',        'South Asia',      1700, 91, 'Home to the iconic Taj Mahal.', NULL),
+('Chennai',        'India',        'South Asia',      2100, 80, 'Cultural capital of South India.', NULL),
+('Kolkata',        'India',        'South Asia',      1900, 78, 'City of joy with colonial heritage and culture.', 'https://images.unsplash.com/photo-1571679654681-ba01b9e1e117?auto=format&fit=crop&w=1200&q=80'),
+('Tokyo',          'Japan',        'East Asia',       7500, 98, 'Ultra-modern metropolis blending tradition and innovation.', NULL),
+('Bangkok',        'Thailand',     'Southeast Asia',  3500, 96, 'Vibrant street life, temples, and floating markets.', 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1200&q=80'),
+('Bali',           'Indonesia',    'Southeast Asia',  3200, 94, 'Spiritual island paradise of rice terraces and temples.', NULL),
+('Singapore',      'Singapore',    'Southeast Asia',  6500, 93, 'Futuristic city-state with world-class food.', NULL),
+('Dubai',          'UAE',          'Middle East',     8000, 95, 'Luxury skyscrapers, desert safaris, and world records.', NULL),
+('Paris',          'France',       'Western Europe',  9000, 99, 'City of love, the Eiffel Tower, and haute cuisine.', NULL),
+('Rome',           'Italy',        'Southern Europe', 8000, 97, 'Eternal city of Colosseum, Vatican, and gelato.', NULL),
+('Barcelona',      'Spain',        'Southern Europe', 7500, 94, 'Gaudi architecture, beaches, and lively streets.', 'https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=1200&q=80'),
+('Amsterdam',      'Netherlands',  'Western Europe',  8500, 90, 'Canals, tulips, and world-class museums.', NULL),
+('London',         'UK',           'Western Europe',  10000,98, 'Historic capital with royal heritage and theatre.', NULL),
+('New York',       'USA',          'North America',   12000,99, 'The city that never sleeps.', NULL),
+('Cancun',         'Mexico',       'Central America', 5500, 88, 'Caribbean beaches, Mayan ruins, and cenotes.', NULL),
+('Rio de Janeiro', 'Brazil',       'South America',   5000, 91, 'Carnival, Christ the Redeemer, and Copacabana.', NULL),
+('Cape Town',      'South Africa', 'Africa',          6000, 89, 'Table Mountain, wine country, and coastline.', NULL),
+('Sydney',         'Australia',    'Oceania',         9500, 93, 'Iconic Opera House, Harbour Bridge, and beaches.', NULL)
+ON CONFLICT (name) DO UPDATE SET image_url = EXCLUDED.image_url;
 
 -- ============================================================
 --  SEED DATA – Activities Master
