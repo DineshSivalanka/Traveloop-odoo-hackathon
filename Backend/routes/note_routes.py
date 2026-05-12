@@ -21,7 +21,8 @@ def create_note():
 @note_bp.route("/notes/<int:trip_id>", methods=["GET"])
 def list_notes(trip_id):
     try:
-        return jsonify(get_notes_by_trip(trip_id)), 200
+        notes = get_notes_by_trip(trip_id)
+        return jsonify(notes), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
