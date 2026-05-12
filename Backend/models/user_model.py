@@ -81,7 +81,7 @@ def get_user_profile(user_id):
     conn = connect_db()
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, name, email, avatar_url, is_admin, created_at, language FROM users WHERE id = %s",
+        "SELECT id, name, email, avatar_url, is_admin, created_at FROM users WHERE id = %s",
         (user_id,)
     )
     row = cur.fetchone()
@@ -94,8 +94,7 @@ def get_user_profile(user_id):
             "email":      row[2],
             "avatar_url": row[3],
             "is_admin":   row[4],
-            "created_at": str(row[5]),
-            "language":   row[6]
+            "created_at": str(row[5])
         }
     return None
 
@@ -107,13 +106,13 @@ def update_user_profile(user_id, name, password=None, avatar_url=None, language=
         if password:
             hashed = hash_password(password)
             cur.execute(
-                "UPDATE users SET name = %s, password = %s, avatar_url = COALESCE(%s, avatar_url), language = %s WHERE id = %s",
-                (name, hashed, avatar_url, language, user_id)
+                "UPDATE users SET name = %s, password = %s, avatar_url = COALESCE(%s, avatar_url) WHERE id = %s",
+                (name, hashed, avatar_url, user_id)
             )
         else:
             cur.execute(
-                "UPDATE users SET name = %s, avatar_url = COALESCE(%s, avatar_url), language = %s WHERE id = %s",
-                (name, avatar_url, language, user_id)
+                "UPDATE users SET name = %s, avatar_url = COALESCE(%s, avatar_url) WHERE id = %s",
+                (name, avatar_url, user_id)
             )
         conn.commit()
     finally:
