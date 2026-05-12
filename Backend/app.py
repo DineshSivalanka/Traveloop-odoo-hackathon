@@ -74,12 +74,16 @@ def notes_alias():
     from routes.note_routes import create_note
     return create_note()
 
+from werkzeug.exceptions import HTTPException
+
 @app.errorhandler(Exception)
 def handle_unexpected_error(error):
+    # Let Flask handle HTTP errors (e.g., 404) normally
+    if isinstance(error, HTTPException):
+        return error
+    # Log unexpected exceptions and return JSON error response
     app.logger.exception(error)
-    response = jsonify({"error": str(error)})
-    response.status_code = 500
-    return response
+    return jsonify({"error": str(error)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
