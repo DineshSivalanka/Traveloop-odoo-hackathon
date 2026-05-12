@@ -47,6 +47,10 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!tripId) {
+      setError('Please select a trip before adding a destination.');
+      return;
+    }
     if (!selectedCity) {
       setError('Please select a city from the list.');
       return;
@@ -65,7 +69,7 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
         city_id: selectedCity.id,
         arrival_date: startDate,
         departure_date: endDate,
-        stop_order: nextOrder 
+        stop_order: nextOrder
       });
       
       setSaving(false);
@@ -246,7 +250,7 @@ const AddStop = ({ tripId, setTab, setSelectedCityId }) => {
 
               <button
                 type="submit"
-                disabled={saving || !selectedCity}
+                disabled={saving || !selectedCity || !tripId}
                 className="block large"
               >
                 {saving ? 'Adding...' : '🚀 Add to Itinerary'}

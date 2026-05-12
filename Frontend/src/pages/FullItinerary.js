@@ -8,9 +8,11 @@ const FullItinerary = ({ tripId, setTab }) => {
   const [notes, setNotes] = useState([]);
   const [newItem, setNewItem] = useState('');
   const [newNote, setNewNote] = useState('');
+  const [error, setError] = useState('');
 
   const loadAllData = useCallback(async () => {
     setLoading(true);
+    setError('');
     try {
       const itRes = await API.get(`/full_trip/${tripId}`);
       setData(itRes.data);
@@ -22,6 +24,7 @@ const FullItinerary = ({ tripId, setTab }) => {
       setNotes(noteRes.data || []);
     } catch (err) {
       console.error(err);
+      setError(err.response?.data?.error || err.message || 'Failed to load itinerary');
     } finally {
       setLoading(false);
     }
@@ -84,6 +87,18 @@ const FullItinerary = ({ tripId, setTab }) => {
     });
   };
 
+  if (!tripId) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', flexDirection: 'column', gap: '16px', padding: '24px', textAlign: 'center' }}>
+        <div style={{ fontSize: '3rem' }}>⚠️</div>
+        <h2 style={{ margin: '0', fontSize: '1.6rem' }}>No trip selected</h2>
+        <p style={{ color: 'var(--text-muted)', maxWidth: '560px' }}>
+          Please open a trip from the Dashboard or Trip Detail first, then click Full Itinerary.
+        </p>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', flexDirection: 'column', gap: '16px' }}>
@@ -93,7 +108,17 @@ const FullItinerary = ({ tripId, setTab }) => {
     );
   }
 
-  if (!data || !data.trip) return null;
+  if (!data || !data.trip) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', flexDirection: 'column', gap: '16px', padding: '24px', textAlign: 'center' }}>
+        <div style={{ fontSize: '3rem' }}>🧭</div>
+        <h2 style={{ margin: '0', fontSize: '1.6rem' }}>Itinerary unavailable</h2>
+        <p style={{ color: 'var(--text-muted)', maxWidth: '560px' }}>
+          {error || 'The selected trip could not be loaded. Please go back to Trip Detail and try again.'}
+        </p>
+      </div>
+    );
+  }
 
   const totalCost = calculateTotal();
   const tripDates = getDatesBetween(data.trip.start_date, data.trip.end_date);

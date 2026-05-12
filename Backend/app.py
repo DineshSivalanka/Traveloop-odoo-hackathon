@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
@@ -15,7 +15,23 @@ from routes.note_routes      import note_bp
 from routes.dashboard_routes import dashboard_bp
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+
+@app.before_request
+def handle_options():
+    if request.method == "OPTIONS":
+        response = app.make_default_options_response()
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+        return response, 200
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers.setdefault("Access-Control-Allow-Origin", "*")
+    response.headers.setdefault("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+    response.headers.setdefault("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    return response
 
 # Register all blueprints with /api prefix
 app.register_blueprint(user_bp, url_prefix='/api')
@@ -38,8 +54,18 @@ def full_trip_alias(trip_id):
     from routes.trip_routes import full_trip
     return full_trip(trip_id)
 
+@app.route("/api/full_trip/<int:trip_id>", methods=["GET"])
+def full_trip_api_alias(trip_id):
+    from routes.trip_routes import full_trip
+    return full_trip(trip_id)
+
 @app.route("/checklist", methods=["POST"])
 def checklist_alias():
+    from routes.checklist_routes import add_item
+    return add_item()
+
+@app.route("/api/checklist", methods=["POST"])
+def api_checklist_alias():
     from routes.checklist_routes import add_item
     return add_item()
 

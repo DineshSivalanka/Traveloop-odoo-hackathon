@@ -4,7 +4,7 @@ def add_note(trip_id, content, stop_id=None):
     conn = connect_db()
     cur = conn.cursor()
     cur.execute(
-        "INSERT INTO trip_notes (trip_id, stop_id, content) VALUES (%s, %s, %s) RETURNING id",
+        "INSERT INTO trip_notes (trip_id, stop_id, note_text) VALUES (%s, %s, %s) RETURNING id",
         (trip_id, stop_id, content)
     )
     note_id = cur.fetchone()[0]
@@ -17,7 +17,7 @@ def get_notes_by_trip(trip_id):
     conn = connect_db()
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, content, stop_id, created_at FROM trip_notes WHERE trip_id = %s ORDER BY created_at DESC",
+        "SELECT id, note_text, stop_id, created_at FROM trip_notes WHERE trip_id = %s ORDER BY created_at DESC",
         (trip_id,)
     )
     rows = cur.fetchall()

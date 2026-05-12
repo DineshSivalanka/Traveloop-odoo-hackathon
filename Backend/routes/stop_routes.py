@@ -22,17 +22,26 @@ def get_stop(stop_id):
 # POST /stops
 @stop_bp.route("/stops", methods=["POST"])
 def create_stop():
-    d = request.get_json()
-    stop_id = add_stop(
-        trip_id        = d["trip_id"],
-        city_name      = d["city_name"],
-        city_id        = d.get("city_id"),
-        arrival_date   = d.get("arrival_date"),
-        departure_date = d.get("departure_date"),
-        stop_order     = d.get("stop_order", 1),
-        notes          = d.get("notes", "")
-    )
-    return jsonify({"stop_id": stop_id}), 201
+    d = request.get_json(force=True, silent=True) or {}
+    trip_id = d.get("trip_id")
+    city_name = d.get("city_name")
+
+    if not trip_id or not city_name:
+        return jsonify({"error": "trip_id and city_name are required"}), 400
+
+    try:
+        stop_id = add_stop(
+            trip_id        = trip_id,
+            city_name      = city_name,
+            city_id        = d.get("city_id"),
+            arrival_date   = d.get("arrival_date"),
+            departure_date = d.get("departure_date"),
+            stop_order     = d.get("stop_order", 1),
+            notes          = d.get("notes", "")
+        )
+        return jsonify({"stop_id": stop_id}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # PUT /stops/<stop_id>
 @stop_bp.route("/stops/<int:stop_id>", methods=["PUT"])

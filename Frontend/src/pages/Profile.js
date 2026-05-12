@@ -6,7 +6,6 @@ const Profile = ({ handleLogout, setTab }) => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
-  const [language, setLanguage] = useState('English');
   const [savedCities, setSavedCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -23,7 +22,6 @@ const Profile = ({ handleLogout, setTab }) => {
       setProfile(res.data);
       setName(res.data.name);
       setAvatarUrl(res.data.avatar_url || '');
-      setLanguage(res.data.language || 'English');
 
       const savedRes = await API.get(`/saved/${userId}`);
       setSavedCities(savedRes.data || []);
@@ -44,7 +42,7 @@ const Profile = ({ handleLogout, setTab }) => {
     setMessage('');
 
     const userId = localStorage.getItem('user_id');
-    API.put(`/profile/${userId}`, { name, password, avatar_url: avatarUrl, language })
+    API.put(`/profile/${userId}`, { name, password, avatar_url: avatarUrl })
       .then(() => {
         setSaving(false);
         setMessage('Profile updated successfully! ✅');
@@ -144,20 +142,6 @@ const Profile = ({ handleLogout, setTab }) => {
                   required
                   style={{ padding: '14px 18px', borderRadius: '14px', background: 'var(--card-bg-light)' }}
                 />
-              </div>
-              <div className="form-group">
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Language</label>
-                <select 
-                  value={language} 
-                  onChange={e => setLanguage(e.target.value)}
-                  style={{ width: '100%', padding: '14px 18px', borderRadius: '14px', background: 'var(--card-bg-light)', color: 'var(--text-main)', border: '1px solid var(--card-border)' }}
-                >
-                  <option value="English" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>English</option>
-                  <option value="Spanish" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>Spanish</option>
-                  <option value="French" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>French</option>
-                  <option value="German" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>German</option>
-                  <option value="Hindi" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)' }}>Hindi</option>
-                </select>
               </div>
             </div>
 
