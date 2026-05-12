@@ -82,4 +82,7 @@ def budget_breakdown(trip_id):
 # GET /trips/<trip_id>/full
 @trip_bp.route("/trips/<int:trip_id>/full", methods=["GET"])
 def full_trip(trip_id):
-    return jsonify(get_full_trip(trip_id)), 200
+    try:
+        return jsonify(get_full_trip(trip_id)), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

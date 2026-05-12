@@ -71,8 +71,15 @@ def api_checklist_alias():
 
 @app.route("/notes", methods=["POST"])
 def notes_alias():
-    from routes.note_routes import add_note
-    return add_note()
+    from routes.note_routes import create_note
+    return create_note()
+
+@app.errorhandler(Exception)
+def handle_unexpected_error(error):
+    app.logger.exception(error)
+    response = jsonify({"error": str(error)})
+    response.status_code = 500
+    return response
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
